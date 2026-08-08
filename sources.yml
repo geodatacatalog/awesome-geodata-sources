@@ -3072,7 +3072,6 @@
   themes:
   - transport
   - air
-  - fire
   auth: none
   test:
     url: https://api.airplanes.live/v2/point/45/6/250
@@ -3087,8 +3086,8 @@
     title: All currently tracked military aircraft
   notes: '[air · real-time] Same shape and API design as adsblol (another community ADS-B feeder network, "ac" list
     of flat lat/lon records, PATH-parameterized point/{lat}/{lon}/{radius} rather than bbox query params — same
-    limitation, see adsblol''s notes). Can track known firefighting aircraft/helicopter fleets by ICAO24 hex
-    (v2/hex/{comma-list}) alongside fire data (NASA FIRMS/EFFIS/PSFDF) — hence the fire theme in addition to transport.'
+    limitation, see adsblol''s notes). Can track a known fleet by ICAO24 hex (v2/hex/{comma-list}), e.g. firefighting
+    aircraft/helicopters, though the source itself is generic air-traffic tracking, not fire-specific.'
   status:
     state: ok
     latency_ms: 211
@@ -3198,6 +3197,82 @@
   fetch:
     state: skipped
     detail: auth=api_key, no creds in env; also WebSocket-only, needs a plugin — see notes
+    layer: null
+    checked_at: '2026-08-08'
+- id: marinetraffic
+  name: MarineTraffic (référence AIS commerciale)
+  type: rest
+  endpoint: https://services.marinetraffic.com/api
+  provider: MarineTraffic (Kpler)
+  coverage: global
+  themes:
+  - transport
+  - maritime
+  - ocean
+  auth: api_key
+  auth_url: https://www.marinetraffic.com/en/p/api-services
+  test:
+    url: https://services.marinetraffic.com/api/exportvessels/v:8
+  layers:
+  - id: exportvessels/v:8
+    title: Live vessel positions in an area (paid PS01/PS02-class service)
+  - id: portcalls/v:3
+    title: Port calls (arrivals/departures)
+  - id: portcongestion/v:1
+    title: Port congestion analytics
+  - id: voyageforecast/v:2
+    title: Predictive arrivals / voyage forecast
+  notes: 'The industry-reference commercial AIS/vessel-tracking provider — satellite + terrestrial AIS fused
+    into live and historical positions, vessel master data (IMO/MMSI, type, dimensions), port calls, and
+    predictive-arrival analytics; the de-facto benchmark the free sources in this registry (aisstream_io,
+    digitraffic_marine, global_fishing_watch) are usually compared against for coverage/latency/completeness.
+    Acquired by Kpler in 2024 (see kpler_maritime) but still operated and billed as its own product/API family.
+    Paid, per-endpoint API keys (URL pattern services.marinetraffic.com/api/{service}/v:{version}/{API_KEY}/...),
+    no free tier; each service (positions, port calls, congestion, forecasts...) is licensed separately.'
+  status:
+    state: ok
+    latency_ms: 159
+    checked_at: '2026-08-08'
+    detail: 'HTTP 400 "INVALID KEY" on a plain GET (expected: confirms the endpoint exists and requires a paid API key)'
+  fetch:
+    state: skipped
+    detail: 'auth=api_key, no creds in env, no free tier — see notes'
+    layer: null
+    checked_at: '2026-08-08'
+- id: kpler_maritime
+  name: Kpler Maritime AIS (ex-Spire Maritime)
+  type: rest
+  endpoint: https://servicedocs-sm.kpler.com
+  provider: Kpler
+  coverage: global
+  themes:
+  - transport
+  - maritime
+  - ocean
+  auth: api_key
+  auth_url: https://developers.kpler.com/
+  test:
+    url: https://servicedocs-sm.kpler.com/
+  layers:
+  - id: messages-api
+    title: Raw/decoded AIS messages (position + static reports)
+  - id: historical-positions-api
+    title: Historical vessel positions
+  notes: 'Kpler''s enterprise maritime AIS product line — formerly Spire Maritime''s satellite AIS constellation
+    (space-based coverage of open ocean where terrestrial AIS receivers cannot reach), acquired by Kpler alongside
+    MarineTraffic (see marinetraffic) to form Kpler''s combined maritime-intelligence stack. The endpoint above
+    is the public documentation portal (servicedocs-sm.kpler.com) — the actual API host/base URL and credentials
+    are only handed out with a commercial contract (contact developers.kpler.com / cs@kpler.com), so there is no
+    self-serve key or free tier to verify a live call against; registered for discovery, not for a bbox-fetchable
+    catalog.yml layer.'
+  status:
+    state: ok
+    latency_ms: 885
+    checked_at: '2026-08-08'
+    detail: 'HTTP 200 (documentation portal only, not the API itself)'
+  fetch:
+    state: skipped
+    detail: 'enterprise-only, no self-serve API host/credentials — see notes'
     layer: null
     checked_at: '2026-08-08'
 - id: global_fishing_watch
