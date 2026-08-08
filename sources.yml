@@ -342,6 +342,9 @@
     auth:
       no-sign-request: true
       region: af-south-1
+  notes: STAC API over Sentinel-2/Landsat surface reflectance, ALOS PALSAR radar mosaics, WOfS (Water Observations
+    from Space), and continental crop/cropland masks for Africa, hosted on AWS af-south-1 as a public (no-sign-request)
+    S3 bucket of Cloud-Optimized GeoTIFFs.
   status:
     state: fail
     latency_ms: 3320
@@ -364,6 +367,9 @@
   - imagery
   - landcover
   auth: none
+  notes: STAC API over Geoscience Australia's Sentinel-2/Landsat ARD (Analysis Ready Data), Fractional Cover,
+    Water Observations from Space, and coastal/geomorphology products, hosted as public Cloud-Optimized GeoTIFFs
+    on AWS.
   status:
     state: ok
     latency_ms: 902
@@ -511,6 +517,9 @@
   - admin
   - infrastructure
   auth: none
+  notes: Vector-styled WMS counterpart to ign_wms_raster — administrative boundaries (ACADEMIES, REGIONS,
+    DEPARTEMENTS...), the Plan IGN v2 vector basemap, and other stylised INSEE/admin layers rendered server-side
+    as images (still a raster GetMap response, just drawn from vector data).
   status:
     state: ok
     latency_ms: 255
@@ -612,6 +621,9 @@
   themes:
   - geology
   auth: none
+  notes: BRGM's national geology WMS — bedrock/surficial geology map (Carte géologique de la France, harmonised
+    1:50k-1:1M), mineral resources, and quarries/mines, viewed through GetCapabilities-listed layers under the
+    GEOSERVICES_GEOLOGIE group.
   status:
     state: ok
     latency_ms: 2169
@@ -677,6 +689,9 @@
   themes:
   - water
   auth: none
+  notes: SANDRE's "masses d'eau" (DCE/WFD water bodies) reference geometries — river, lake, coastal, groundwater
+    and transitional water body polygons/lines used to report France's water status under the EU Water Framework
+    Directive (layer sa:BassinDCE = river basin districts; other typenames cover each water-body category).
   status:
     state: ok
     latency_ms: 254
@@ -764,6 +779,10 @@
   themes:
   - biodiversity
   auth: none
+  notes: OData interface to the Inventaire National du Patrimoine Naturel (INPN) — French species occurrence
+    records, taxonomic referential (TAXREF), and protected/inventoried area attributes (ZNIEFF, Natura 2000).
+    No curated bbox-filterable layer here (no `test`/`layers` set); browse the OData service document to find
+    an entity set, then query it directly.
   status:
     state: ok
     latency_ms: 316
@@ -875,6 +894,11 @@
   - biodiversity
   - meta
   auth: none
+  notes: 'ArcGIS Server root for EEA''s "image" Discomap host — its folders are individual data services, notably
+    Corine (Corine Land Cover, see also the curated eea_clc2018 WMS), CLC_plus (CLC+ Backbone), EUHydro (river
+    network/drainage), Elevation, Forest_Snapshot (forêt), LUCAS (in-situ land-use survey points), Natura2000, Noise,
+    RiparianZones, SoilSealing, and UrbanAtlas. Each folder is its own MapServer/FeatureServer — drill in with
+    the ArcGIS REST API (?f=json) rather than treating this endpoint itself as one service.'
   status:
     state: ok
     latency_ms: 1215
@@ -918,6 +942,10 @@
   themes:
   - biodiversity
   auth: none
+  notes: 'ArcGIS Server root for EEA''s "bio" Discomap host — biodiversity-focused folders: N2K_Backbone and
+    ProtectedSites (Natura 2000 site boundaries/attributes), Article17 and Article_12 (Habitats/Birds Directive
+    conservation-status reporting), EUNIS (habitat classification), BioRegions, HNV (High Nature Value farmland),
+    and MAES (ecosystem assessment). Drill into a folder''s MapServer/FeatureServer via the ArcGIS REST API.'
   status:
     state: ok
     latency_ms: 813
@@ -963,6 +991,9 @@
   layers:
   - id: api/events/geteventlist/MAP
     title: Current disaster events (GeoJSON)
+  notes: Global Disaster Alert and Coordination System — near-real-time alerts (green/orange/red severity) for
+    earthquakes, tropical cyclones, floods, volcanoes, droughts and tsunamis worldwide, each event a point/polygon
+    with a magnitude/impact estimate. Complements usgs_earthquake (quakes only) with a broader, multi-hazard feed.
   status:
     state: ok
     latency_ms: 451
@@ -984,6 +1015,10 @@
   - basemap
   - admin
   auth: none
+  notes: EuroGeographics' pan-European reference portal — pan-European basemaps and administrative boundaries
+    (EuroBoundaryMap, EuroGlobalMap, EuroRegionalMap) sourced from national mapping/cadastral agencies. A download
+    portal (view/order per dataset), not a live OGC service — browse it, then fetch the specific WMS/download it
+    points to.
   status:
     state: ok
     latency_ms: 194
@@ -1025,6 +1060,8 @@
   - ocean
   - elevation
   auth: none
+  notes: WCS coverage access to the same European bathymetry DTM as emodnet_bathymetry's WMS (~115 m resolution
+    digital terrain model of sea depth), for raw elevation values rather than a rendered image.
   status:
     state: ok
     latency_ms: 130
@@ -1045,6 +1082,9 @@
   - ocean
   - biodiversity
   auth: none
+  notes: Marine species distribution & abundance layers modelled from occurrence data (e.g. cti_* = Community
+    Temperature Index per taxon group, by region — the test layer cti_macroalgae_nw_spain covers NW Spain only,
+    hence the empty fetch elsewhere). GetCapabilities lists the full set of species/region combinations.
   status:
     state: ok
     latency_ms: 126
@@ -1067,6 +1107,8 @@
   - biodiversity
   - landcover
   auth: none
+  notes: EUSeaMap broad-scale seabed habitat classification (EUNIS habitat types, substrate, biological zone)
+    covering European seas, plus specific habitat layers like the test one (coralligenous_platforms_group).
   status:
     state: ok
     latency_ms: 243
@@ -1086,13 +1128,14 @@
   themes:
   - ocean
   - transport
+  - maritime
   - infrastructure
   auth: none
   test:
     layer: emodnet:portvessels
-  notes: 'Human uses of the sea (WFS vectors): port vessels (portvessels, portvesselsbytype), fishing effort by
-    vessel type, pipelines, wind farms, aggregates... AIS vessel/route density grids are the raster product on the
-    WMS — see emodnet_vessel_density.'
+  notes: '[maritime · static/aggregate, not real-time] Human uses of the sea (WFS vectors): port vessels (portvessels,
+    portvesselsbytype), fishing effort by vessel type, pipelines, wind farms, aggregates... AIS vessel/route density
+    grids are the raster product on the WMS — see emodnet_vessel_density.'
   status:
     state: ok
     latency_ms: 239
@@ -1112,14 +1155,15 @@
   coverage: europe
   themes:
   - transport
+  - maritime
   - ocean
   - infrastructure
   auth: none
   test:
     layer: vesseldensity_00
-  notes: Monthly AIS-derived vessel & route density grids for all European seas (open, no auth). Raster layers VesselDensity/RouteDensity
-    and per-ship-type vesseldensity_NN (00=all, then fishing, cargo, tanker, passenger...), each with _avg and _seasonal
-    variants.
+  notes: '[maritime · aggregate, monthly, not real-time] Monthly AIS-derived vessel & route density grids for all
+    European seas (open, no auth). Raster layers VesselDensity/RouteDensity and per-ship-type vesseldensity_NN (00=all,
+    then fishing, cargo, tanker, passenger...), each with _avg and _seasonal variants.'
   status:
     state: ok
     latency_ms: 260
@@ -1142,6 +1186,9 @@
   auth: none
   test:
     layer: GEBCO_LATEST
+  notes: The reference global ocean+land bathymetry/topography grid (GEBCO_LATEST, ~450 m/15 arc-second), plus
+    sub-ice terrain variants (GEBCO_LATEST_SUB_ICE_TOPO) that show bedrock under Antarctic/Greenland ice sheets
+    instead of the ice surface.
   status:
     state: ok
     latency_ms: 173
@@ -1200,6 +1247,9 @@
     dataKey: results
     lonField: decimalLongitude
     latField: decimalLatitude
+  notes: Ocean Biodiversity Information System — georeferenced marine species occurrence records (WoRMS-aligned
+    taxonomy) contributed by research institutes worldwide, the marine counterpart to GBIF's terrestrial-leaning
+    dataset. Same shape as GBIF (decimalLongitude/decimalLatitude, WKT geometry filter, pagination).
   status:
     state: ok
     latency_ms: 1038
@@ -1244,6 +1294,8 @@
   auth: none
   test:
     layer: clay_0-5cm_mean
+  notes: Same WCS pattern as soilgrids_sand, for clay content (g/kg fine earth) — 6 standard depths (0-5cm...100-200cm)
+    each as mean/uncertainty-quantile layers.
   status:
     state: ok
     latency_ms: 3926
@@ -1265,6 +1317,8 @@
   auth: none
   test:
     layer: soc_0-5cm_mean
+  notes: Same WCS pattern as soilgrids_sand, for soil organic carbon content (g/kg) — 6 standard depths each as
+    mean/uncertainty-quantile layers.
   status:
     state: ok
     latency_ms: 3548
@@ -1323,6 +1377,9 @@
   - landcover
   - climate
   auth: none
+  notes: Static STAC catalog of OpenGeoHub's global 30m/250m soil, land cover and climate prediction layers
+    (machine-learning gap-filled from satellite + in-situ data — soil pH/texture/carbon, forest/forêt cover
+    change, cropland extent...), an alternative/complement to ISRIC SoilGrids at finer resolution for some products.
   status:
     state: ok
     latency_ms: 243
@@ -1342,6 +1399,9 @@
   themes:
   - soil
   auth: none
+  notes: SSURGO/STATSGO2 soil survey database for the US (soil map units + hundreds of attribute tables — texture,
+    drainage, suitability...), queried with SQL-like "Tabular/post.rest" requests, not a REST/OGC bbox API — needs
+    a dedicated client to build the SDA query and join the returned attributes to the mapunit polygons.
   status:
     state: ok
     latency_ms: 609
@@ -1361,6 +1421,8 @@
   themes:
   - elevation
   auth: none
+  notes: 3D Elevation Program seamless DEM mosaic for the US (1/3 arc-second ~10 m, with 1-meter LiDAR-derived
+    coverage in many areas), served as a single dynamic WCS coverage (DEP3Elevation) rather than per-tile products.
   status:
     state: ok
     latency_ms: 1679
@@ -1398,6 +1460,9 @@
   - elevation
   - water
   auth: none
+  notes: USGS's index of The National Map's live services — 3DEP elevation (see usgs_3dep), NHD (National
+    Hydrography Dataset, rivers/lakes), WBD (Watershed Boundary Dataset), topo basemaps, transportation, structures
+    and governmental units. A portal linking to each dataset's own WMS/WFS/ImageServer, not a single API itself.
   status:
     state: ok
     latency_ms: 105
@@ -1479,6 +1544,9 @@
   - ocean
   - hazards
   auth: none
+  notes: NOAA's coastal-focused visualization portal — near-real-time radar/satellite imagery, marine forecasts
+    (waves, sea surface temperature), tides/currents, and storm/hurricane tracks over US waters, exposed as
+    ArcGIS MapServer WMS/WMTS per dataset behind the portal.
   status:
     state: ok
     latency_ms: 231
@@ -1504,6 +1572,9 @@
     title: Active weather alerts (area/point filters)
   - id: stations
     title: Observation stations
+  notes: US National Weather Service — active weather alerts/warnings (polygons), point forecasts, and observation
+    station metadata/readings. `alerts/active` filters by `area` (state code) or `point` (lat,lon), not a bbox
+    param, hence the 400 on a plain bbox query.
   status:
     state: ok
     latency_ms: 252
@@ -1560,6 +1631,9 @@
   themes:
   - landcover
   auth: none
+  notes: Multi-Resolution Land Characteristics Consortium's National Land Cover Database — 30 m land cover
+    classification for the US (multiple release years for change detection) plus impervious surface, canopy
+    cover and fractional component layers (e.g. the test layer's Exotic_Annual_Grass rangeland product).
   status:
     state: ok
     latency_ms: 754
@@ -1582,6 +1656,10 @@
   - hazards
   - meta
   auth: none
+  notes: 'EPA''s ArcGIS Server index — environmental-compliance and monitoring folders: watersheds/impaired
+    waters (WOUS, OW, OWOWM), Superfund/enforcement sites (OECA, OLEM, OLEM_FedFac), pesticide use (pesticide,
+    OPP), radiation monitoring (RadMap), and screening tools (NEPAssist, monitor). Each folder is its own
+    MapServer/FeatureServer, browsed via the ArcGIS REST API.'
   status:
     state: ok
     latency_ms: 596
@@ -1601,6 +1679,8 @@
   themes:
   - basemap
   auth: none
+  notes: Germany's free national topographic basemap (Bundesamt für Kartographie und Geodäsie) — the "web" layer
+    is the standard colour cartography; greyscale and night variants exist under the same service.
   status:
     state: ok
     latency_ms: 362
@@ -1620,6 +1700,8 @@
   themes:
   - basemap
   auth: api_key
+  notes: Great Britain's national mapping agency raster basemap (Leisure/Road/Outdoor styles) at OS-grade detail
+    — free tier requires a project API key from OS Data Hub (osdatahub.os.uk).
   status:
     state: auth_required
     latency_ms: 179
@@ -1641,6 +1723,10 @@
   - hazards
   - biodiversity
   auth: none
+  notes: 'England''s environmental open-data portal — flood risk maps (Risk of Flooding from Rivers and Sea),
+    river/bathing water quality, LiDAR terrain, and Natural England habitat/protected-site data, each dataset
+    with its own WMS/WFS under environment.data.gov.uk. This specific /spatialdata/ path 404s (checked 2026-08-08);
+    browse from the portal root (environment.data.gov.uk) to find a live dataset endpoint.'
   status:
     state: fail
     latency_ms: 332
@@ -1672,6 +1758,8 @@
   themes:
   - basemap
   auth: none
+  notes: Spain's national mapping agency reference basemap (IGNBaseTodo = combined topo/admin styling; other
+    IGNBase* layers isolate individual themes).
   status:
     state: ok
     latency_ms: 67
@@ -1693,6 +1781,9 @@
   - elevation
   - admin
   auth: none
+  notes: Switzerland's federal geoportal (swisstopo) — hundreds of WMS layers spanning topo basemaps, DEM/relief
+    shading, administrative boundaries, and thematic layers down to niche ones like the test layer (war memorials,
+    ch.vbs.armee-kriegsdenkmaeler); grep GetCapabilities for a topic rather than guessing a layer name.
   status:
     state: ok
     latency_ms: 279
@@ -1714,6 +1805,9 @@
   - admin
   - meta
   auth: none
+  notes: Flanders' (Belgium) geoportal (Geopunt) — reference basemaps, administrative boundaries, and topographic/orthophoto
+    services, each dataset exposed as its own WMS/WFS/WMTS under geo.api.vlaanderen.be; browse the portal to
+    find the specific service.
   status:
     state: ok
     latency_ms: 173
@@ -1734,6 +1828,9 @@
   - basemap
   - admin
   auth: none
+  notes: Natural Resources Canada's CanVec topographic vector basemap (roads, hydrography, buildings, admin
+    boundaries), rendered as a single combined WMS layer (canvec). The host has been unreliable (connection
+    refused/timeouts observed) — worth a retry/status check before relying on it.
   status:
     state: ok
     latency_ms: 803
@@ -1776,6 +1873,8 @@
   themes:
   - basemap
   auth: none
+  notes: Norway's national mapping agency (Kartverket) topographic basemap WMS (layer "topo" — combined roads,
+    terrain shading, place names); Geonorge hosts many more per-theme services beyond this basemap one.
   status:
     state: ok
     latency_ms: 338
@@ -1834,6 +1933,44 @@
     detail: auth=api_key, no creds in env
     layer: null
     checked_at: '2026-08-08'
+- id: psfdf
+  name: PSFDF (incendies signalés en France)
+  type: rest
+  endpoint: https://test1.evan-rngt83060.workers.dev
+  provider: Association Prévention et Signalement Feux de Forêt (PSFDF)
+  coverage: france
+  themes:
+  - fire
+  - hazards
+  auth: none
+  test:
+    url: https://test1.evan-rngt83060.workers.dev/
+  layers:
+  - id: reports
+    title: Community-reported wildfire incidents (status, commune, aerial/ground means engaged)
+  catalog:
+    api_endpoint: https://test1.evan-rngt83060.workers.dev/
+    queryParam: format
+    lonField: Longitude
+    latField: Latitude
+  notes: 'Crowdsourced forest-fire/wildfire reports (statut/commune/surface/moyens aériens & terrestres engagés
+    — Hélicoptère, Avion, Canadair, Dash, AirTractor...), maintained by the PSFDF association to complement NASA
+    FIRMS/EFFIS with human-confirmed status. The endpoint is an undocumented Cloudflare Worker (test1.evan-rngt83060.workers.dev)
+    reverse-engineered from association-psfdf.fr''s own map — not a published/versioned API, so it may change or
+    break without notice; CORS is wide open (access-control-allow-origin: *), confirming it is meant for public
+    browser consumption. Returns a bare JSON array (no bbox filter, always the full feed) with flat Latitude/Longitude
+    fields, so RESTLayer parses it directly (lonField=Longitude/latField=Latitude); extra query params are ignored
+    server-side.'
+  status:
+    state: ok
+    latency_ms: 851
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: not yet fetched through geodatacatalog — verified reachable + parseable via curl, see notes
+    layer: null
+    checked_at: '2026-08-08'
 - id: copernicus_cds
   name: Copernicus Climate Data Store API
   type: rest
@@ -1867,6 +2004,9 @@
   layers:
   - id: forecasts
     title: Open forecast data index (GRIB)
+  notes: ECMWF's free, no-key global NWP output (HRES/ENS forecasts) as raw GRIB2 files organised by run date/time
+    under this index — a plain HTTP file listing, not a queryable REST API; download and parse the GRIB files
+    client-side (e.g. with cfgrib/xarray), not through RESTLayer's bbox/JSON model.
   status:
     state: ok
     latency_ms: 766
@@ -1887,6 +2027,9 @@
   - weather
   - climate
   auth: none
+  notes: NOAA's operational NWP model output archive — GFS, GEFS ensemble, HRRR (US high-resolution), WW3 wave
+    model, and more, as GRIB2 files (with a GDS subsetting service for some models). A file server, not a REST/OGC
+    API — pick a model/run, then download/subset the GRIB.
   status:
     state: ok
     latency_ms: 240
@@ -1915,6 +2058,11 @@
     title: Disaster events
   - id: countries
     title: Country profiles
+  notes: UN OCHA's humanitarian information hub — situation reports, disaster event records (linked to GLIDE
+    numbers), and country crisis profiles; not primarily geospatial (reports/text with a country/disaster
+    reference), so pair it with GDACS or nasa_firms/effis for the actual event geometry. The 403 above looks
+    like it needs an `appname=` query param on every request (bare GETs get blocked), which the test URL already
+    supplies.
   status:
     state: fail
     latency_ms: 364
@@ -1930,6 +2078,10 @@
   - hazards
   - basemap
   auth: none
+  notes: Lets you draw an AOI and export OpenStreetMap data as a themed extract (buildings, roads, waterways,
+    health facilities...) in Shapefile/GeoJSON/GeoPackage/KML, built for humanitarian mapping response. A
+    browser export tool, not a queryable API — use the Overpass API directly (source "overpass") for a
+    programmatic equivalent.
   status:
     state: ok
     latency_ms: 577
@@ -2063,6 +2215,9 @@
   layers:
   - id: species
     title: Species lookup
+  notes: Species range-map aggregator (queries GBIF/OBIS/eBird/IUCN and other sources behind one API) — species
+    lookup by name returns known distribution/range polygons. The species endpoint above 404s/empty-bodies on
+    a bare GET (see fetch below); it needs a species-name path segment, not a query string.
   status:
     state: ok
     latency_ms: 755
@@ -2083,6 +2238,9 @@
   - geology
   - meta
   auth: none
+  notes: Global geological-survey federation portal — aggregates each participating country's own geology WMS
+    (~120 national surveys) behind one viewer/CSW, rather than hosting the map data itself. Use `discover`
+    against its CSW to find the WMS a given country actually exposes.
   status:
     state: ok
     latency_ms: 251
@@ -2111,6 +2269,9 @@
     title: Stratigraphic columns
   - id: defs/lithologies
     title: Lithology definitions
+  notes: Stratigraphic/lithologic database — geologic units at a point, drilled stratigraphic columns, and
+    lithology/timescale reference tables, mostly US/global synthesis rather than a detailed national geology
+    map (for that, prefer a national survey like brgm_geologie or bgs_uk).
   status:
     state: ok
     latency_ms: 421
@@ -2130,6 +2291,10 @@
   themes:
   - geology
   auth: none
+  notes: State Geologic Map Compilation — a harmonised, state-by-state bedrock geology map for the entire US
+    (each state its own layer/style, hence per-state layer names like the test one, mrds-AL). The GetCapabilities
+    URL and the actual GetMap host differ (mrdata.usgs.gov/services vs .../mapcache), which is why a naive GetMap
+    against the capabilities host 404s.
   status:
     state: ok
     latency_ms: 725
@@ -2151,6 +2316,10 @@
   auth: none
   test:
     url: https://map.bgs.ac.uk/arcgis/rest/services?f=json
+  notes: 'UK''s national geological survey ArcGIS Server — notable folders: GeologyOfBritain (bedrock/superficial
+    geology), GeoIndex_Onshore/GeoIndex_Offshore/GeoIndex_GSNI (borehole & site indexes), Seismic_Hazard_Maps,
+    hydroTimeline (groundwater levels), and quaternary. Each folder is its own MapServer, browsed via the ArcGIS
+    REST API.'
   status:
     state: ok
     latency_ms: 227
@@ -2351,6 +2520,10 @@
     title: Geocoding (q=, format=json)
   - id: reverse
     title: Reverse geocoding (lat/lon)
+  notes: OpenStreetMap's public geocoder — free-text place search (search) and point-to-address reverse lookup
+    (reverse), global coverage from OSM data. The shared demo instance enforces a strict usage policy (~1 req/s,
+    proper User-Agent, no heavy/bulk use) — hence the 403 on a bbox-styled request below; for France-only needs
+    prefer ban_geoplateforme (Géoplateforme/BAN), which has no such rate limit.
   status:
     state: ok
     latency_ms: 224
@@ -2361,6 +2534,36 @@
     detail: 'HTTPError: 403 Client Error: Forbidden for url: https://nominatim.openstreetmap.org/search?bbox=1.4%2C43.55%2C1.5%2C43.65&size=200&format=json'
     layer: search
     checked_at: '2026-08-08'
+- id: ban_geoplateforme
+  name: Géoplateforme / Base Adresse Nationale (géocodage)
+  type: rest
+  endpoint: https://data.geopf.fr/geocodage
+  provider: IGN (Géoplateforme) / Base Adresse Nationale
+  coverage: france
+  themes:
+  - admin
+  auth: none
+  test:
+    url: https://data.geopf.fr/geocodage/reverse?lon=2.35&lat=48.85
+  layers:
+  - id: search
+    title: Geocoding (q=, France only)
+  - id: reverse
+    title: Reverse geocoding (lon/lat → nearest address/commune)
+  notes: French national address/geocoding API (BAN data), successor of api-adresse.data.gouv.fr — e.g. to label
+    a clicked point with its commune. No key needed, France only (use nominatim for global coverage). Point-query
+    only (one lon/lat per request, no bbox), so registered for discovery/enrichment rather than a bbox-fetchable
+    catalog.yml layer.
+  status:
+    state: ok
+    latency_ms: 129
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: point-query only (lon/lat → nearest address, no bbox) — not a fetchable layer, see notes
+    layer: null
+    checked_at: '2026-08-08'
 - id: osm_tiles
   name: OSM standard tiles
   type: xyz
@@ -2370,6 +2573,9 @@
   themes:
   - basemap
   auth: none
+  notes: The canonical OSM "Standard" style raster basemap (the tiles shown on openstreetmap.org). The public
+    tile server has a strict usage policy (no heavy/bulk scripted use, proper User-Agent) — for an app serving
+    many users, prefer carto_basemaps or a dedicated tile provider instead of hammering this one.
   status:
     state: ok
     latency_ms: 75
@@ -2405,6 +2611,59 @@
     detail: 'xyz: raster tile template, no queryable layer; see Status for reachability'
     layer: null
     checked_at: '2026-08-08'
+- id: eox_s2cloudless
+  name: Sentinel-2 cloudless by EOX (fond satellite mondial)
+  type: xyz
+  endpoint: https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2020_3857/default/g/{z}/{y}/{x}.jpg
+  provider: EOX IT Services (Copernicus Sentinel-2 data)
+  coverage: global
+  themes:
+  - basemap
+  - satellite
+  auth: none
+  test:
+    url: https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2020_3857/default/g/0/0/0.jpg
+  notes: 'Free, no-key, global cloud-free Sentinel-2 mosaic (10 m, 2020 edition), suitable as a world base layer
+    under national orthophotos. WMTS RESTful, but the path order is z/y/x (TileMatrix/TileRow/TileCol,
+    per the WMTS spec) rather than the usual XYZ z/x/y — the {y} before {x} above is deliberate, not a typo; xyz.py
+    substitutes placeholders by name so this template works as-is. Attribution required: "Contains modified Copernicus
+    Sentinel data 2020".'
+  status:
+    state: ok
+    latency_ms: 168
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'xyz: raster tile template, no queryable layer; see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: openfreemap
+  name: OpenFreeMap (tuiles vectorielles, toponymes)
+  type: registry
+  endpoint: https://tiles.openfreemap.org
+  provider: OpenFreeMap (Jawg / OpenMapTiles schema)
+  coverage: global
+  themes:
+  - basemap
+  auth: none
+  test:
+    url: https://tiles.openfreemap.org/planet
+  notes: Free, no-key, unlimited global vector tiles (OpenMapTiles schema, OSM data) — suitable for place-name
+    labels drawn over a raster satellite/orthophoto base (a `toponyms` vector source in a MapLibre style, glyphs
+    at tiles.openfreemap.org/fonts). MVT/PBF vector tiles, not something geodatacatalog's REST/XYZ layers
+    can fetch (no raster mosaicking, no per-record lon/lat) — registered for discovery/MapLibre styling only, add
+    it as a native vector source/style, not via add_xyz_tile_layer.
+  status:
+    state: ok
+    latency_ms: 80
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: vector tiles (MVT/PBF), MapLibre styling only — not fetchable via geodatacatalog, see notes
+    layer: null
+    checked_at: '2026-08-08'
 - id: openaerialmap
   name: OpenAerialMap
   type: rest
@@ -2412,6 +2671,7 @@
   provider: OpenAerialMap
   coverage: global
   themes:
+  - satellite
   - imagery
   auth: none
   test:
@@ -2419,6 +2679,9 @@
   layers:
   - id: meta
     title: Imagery metadata search (bbox)
+  notes: Crowdsourced/open-licence drone & aerial imagery catalogue (mostly humanitarian/disaster-response
+    captures) — `meta` returns COG asset metadata + a bbox per image, not the pixels themselves; fetch the
+    linked COG separately once you have a scene of interest.
   status:
     state: ok
     latency_ms: 465
@@ -2479,6 +2742,10 @@
   - basemap
   - admin
   auth: none
+  notes: Public-domain, cartographer-curated world vector dataset at 3 generalisation scales (1:10m/1:50m/1:110m)
+    — countries/admin-1 boundaries, coastlines, rivers/lakes, populated places, roads/railroads. A static download
+    page (Shapefile/GeoPackage zips per theme+scale), not a live API — good as a lightweight offline basemap/AOI
+    reference when a live WFS is overkill.
   status:
     state: ok
     latency_ms: 626
@@ -2563,6 +2830,10 @@
   layers:
   - id: action/package_search
     title: CKAN dataset search
+  notes: US federal open-data catalogue (CKAN) — full-text search over ~300k government datasets (not all
+    geospatial); each result's `resources` may include a WMS/WFS/Shapefile/GeoJSON link to follow, this endpoint
+    itself only returns dataset metadata. The 404 below suggests the catalog.data.gov CKAN API path has moved —
+    verify against data.gov's current API docs before relying on it.
   status:
     state: fail
     latency_ms: 286
@@ -2693,6 +2964,7 @@
   coverage: global
   themes:
   - transport
+  - air
   - infrastructure
   auth: none
   test:
@@ -2705,9 +2977,9 @@
     title: Flights in a time window (begin/end epoch seconds)
   catalog:
     plugin: opensky.py
-  notes: Live aircraft positions. Responses are positional ARRAYS (state vectors), so the shipped opensky.py plugin
-    maps them to points (states/all). Anonymous access is rate-limited; a free OpenSky account (auth.credentials
-    username/password) raises the limits.
+  notes: '[air · real-time] Live aircraft positions. Responses are positional ARRAYS (state vectors), so the shipped
+    opensky.py plugin maps them to points (states/all). Anonymous access is rate-limited; a free OpenSky account
+    (auth.credentials username/password) raises the limits.'
   status:
     state: ok
     latency_ms: 119
@@ -2719,6 +2991,149 @@
     layer: states/all
     checked_at: '2026-08-08'
     count: 73
+- id: adsblol
+  name: adsb.lol (positions ADS-B temps réel)
+  type: rest
+  endpoint: https://api.adsb.lol/v2
+  provider: adsb.lol (community feeder network)
+  coverage: global
+  themes:
+  - transport
+  - air
+  auth: none
+  test:
+    url: https://api.adsb.lol/v2/point/45/6/250
+  layers:
+  - id: point/{lat}/{lon}/{radius}
+    title: Live aircraft within radius (nm, max 250) of a point
+  - id: closest/{lat}/{lon}/{radius}
+    title: Closest aircraft to a point
+  - id: hex/{icao_hex}
+    title: Live position by ICAO24 hex
+  - id: callsign/{callsign}
+    title: Live position by callsign
+  - id: mil
+    title: All currently tracked military aircraft
+  - id: pia
+    title: All currently tracked PIA (privacy ICAO address) aircraft
+  notes: '[air · real-time] Free, no-auth, community-fed alternative to OpenSky (often denser European coverage).
+    Each record is a flat JSON object with lat/lon fields inside a top-level "ac" list, which RESTLayer''s data_key=ac/lonField=lon/latField=lat
+    could parse directly — but every endpoint takes lat/lon/radius as PATH segments (point/{lat}/{lon}/{radius}),
+    not query-string bbox params, so today''s bboxParams mechanism can''t build the URL: needs a small plugin (or
+    a path-templating addition to rest.py) to turn request.bbox into a centre + radius. Pair with adsbdb to resolve
+    a returned hex/callsign into aircraft type/owner and route origin-destination.'
+  status:
+    state: ok
+    latency_ms: 294
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: path-templated (lat/lon/radius in the URL, not bbox query params) — needs a plugin, see notes
+    layer: null
+    checked_at: '2026-08-08'
+- id: adsbdb
+  name: adsbdb (référentiel aéronefs & routes de vol)
+  type: rest
+  endpoint: https://api.adsbdb.com/v0
+  provider: adsbdb
+  coverage: global
+  themes:
+  - transport
+  - air
+  auth: none
+  test:
+    url: https://api.adsbdb.com/v0/callsign/AFR123
+  layers:
+  - id: aircraft/{icao_hex_or_registration}
+    title: Aircraft metadata (type, manufacturer, registration, owner) by ICAO24 hex or registration
+  - id: callsign/{callsign}
+    title: Flight route (airline + origin/destination airports, incl. lat/lon) by callsign
+  notes: '[air · reference/lookup, not positional] Lookup-only reference API (one hex/registration/callsign per
+    request, no bbox) — the natural companion to live-position sources (adsblol, opensky) to enrich a state vector''s
+    hex/callsign with aircraft type/owner and the route''s origin/destination airports (which do carry lat/lon).
+    No bbox-fetchable layer of its own, registered here for discovery/enrichment rather than as a catalog.yml layer.'
+  status:
+    state: ok
+    latency_ms: 106
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: lookup-only API (single hex/callsign per request, no bbox) — not a fetchable layer, see notes
+    layer: null
+    checked_at: '2026-08-08'
+- id: airplanes_live
+  name: Airplanes.live (positions ADS-B temps réel, moyens aériens)
+  type: rest
+  endpoint: https://api.airplanes.live/v2
+  provider: Airplanes.live (community feeder network)
+  coverage: global
+  themes:
+  - transport
+  - air
+  - fire
+  auth: none
+  test:
+    url: https://api.airplanes.live/v2/point/45/6/250
+  layers:
+  - id: point/{lat}/{lon}/{radius}
+    title: Live aircraft within radius (nm, max 250) of a point
+  - id: hex/{icao_hex_list}
+    title: Live position by ICAO24 hex (comma-separated list — track a known fleet)
+  - id: callsign/{callsign}
+    title: Live position by callsign
+  - id: mil
+    title: All currently tracked military aircraft
+  notes: '[air · real-time] Same shape and API design as adsblol (another community ADS-B feeder network, "ac" list
+    of flat lat/lon records, PATH-parameterized point/{lat}/{lon}/{radius} rather than bbox query params — same
+    limitation, see adsblol''s notes). Can track known firefighting aircraft/helicopter fleets by ICAO24 hex
+    (v2/hex/{comma-list}) alongside fire data (NASA FIRMS/EFFIS/PSFDF) — hence the fire theme in addition to transport.'
+  status:
+    state: ok
+    latency_ms: 211
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: path-templated (lat/lon/radius or hex list in the URL, not bbox query params) — needs a plugin, see
+      notes
+    layer: null
+    checked_at: '2026-08-08'
+- id: openflights
+  name: OpenFlights (aéroports, compagnies, routes aériennes)
+  type: rest
+  endpoint: https://raw.githubusercontent.com/jpatokal/openflights/master/data
+  provider: OpenFlights / OurAirports
+  coverage: global
+  themes:
+  - transport
+  - air
+  auth: none
+  test:
+    url: https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports.dat
+  layers:
+  - id: airports.dat
+    title: ~7700 airports (name, IATA/ICAO, lat/lon, altitude, timezone)
+  - id: airlines.dat
+    title: ~6100 airlines (name, IATA/ICAO, country, active flag)
+  - id: routes.dat
+    title: ~67600 routes (airline + source/destination airport codes, no geometry)
+  notes: '[air · static reference, not real-time] Static, unheadered CSV snapshots (community-maintained, last major
+    update ~2017 but still widely reused) — no live API, no bbox filter, whole file per download. airports.dat carries
+    lat/lon per row so it geolocates directly; routes.dat only has airport codes (needs a join against airports.dat
+    for geometry). Positional (unheadered) CSV columns, so a plugin is needed to parse and geolocate rather than
+    RESTLayer''s lonField/latField.'
+  status:
+    state: ok
+    latency_ms: 322
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: unheadered positional CSV, whole file per download — needs a plugin to parse/geolocate, see notes
+    layer: null
+    checked_at: '2026-08-08'
 - id: digitraffic_marine
   name: Digitraffic Marine (trafic maritime AIS)
   type: rest
@@ -2727,6 +3142,7 @@
   coverage: finland
   themes:
   - transport
+  - maritime
   - ocean
   - infrastructure
   auth: none
@@ -2737,8 +3153,9 @@
     title: Live vessel positions (GeoJSON)
   - id: ais/v1/vessels
     title: Vessel metadata (by MMSI)
-  notes: Open AIS vessel traffic in Finnish waters only (Fintraffic) — not Europe-wide. Returns a GeoJSON FeatureCollection
-    (geometry, not flat lon/lat), so it needs GeoJSON parsing. The server requires an Accept-Encoding gzip header.
+  notes: '[maritime · real-time] Open AIS vessel traffic in Finnish waters only (Fintraffic) — not Europe-wide.
+    Returns a GeoJSON FeatureCollection (geometry, not flat lon/lat), so it needs GeoJSON parsing. The server requires
+    an Accept-Encoding gzip header.'
   status:
     state: ok
     latency_ms: 182
@@ -2749,6 +3166,40 @@
     detail: 'HTTPError: 400 Client Error: Bad Request for url: https://meri.digitraffic.fi/api/ais/v1/locations?bbox=24.9%2C60.13%2C25.0%2C60.18&size=200&format=json'
     layer: ais/v1/locations
     checked_at: '2026-08-08'
+- id: aisstream_io
+  name: aisstream.io (positions AIS mondiales temps réel)
+  type: rest
+  endpoint: https://stream.aisstream.io/v0/stream
+  provider: aisstream.io
+  coverage: global
+  themes:
+  - transport
+  - maritime
+  - ocean
+  auth: api_key
+  auth_url: https://aisstream.io/authenticate
+  test:
+    url: https://stream.aisstream.io/v0/stream
+  layers:
+  - id: stream
+    title: Live vessel positions & static data worldwide (PositionReport/ShipStaticData messages)
+  notes: '[maritime · real-time] Global, free-tier AIS aggregator (25,000+ vessels) covering far more ground than
+    the region-locked AIS sources already in this registry (digitraffic_marine=Finland, marine_cadastre=USA).
+    WebSocket only (wss://stream.aisstream.io/v0/stream):
+    the client sends a JSON subscription message (APIKey + BoundingBoxes + FilterMessageTypes) then receives a continuous
+    push of PositionReport/ShipStaticData frames — not a request/response GET, so RESTLayer''s poll-once model does
+    not fit; needs a plugin built on a websocket client that opens the socket, filters by request.bbox, listens
+    for a few seconds and returns the accumulated positions. Free API key required (register at aisstream.io/authenticate).'
+  status:
+    state: ok
+    latency_ms: 109
+    checked_at: '2026-08-08'
+    detail: 'HTTP 400 on a plain GET (expected: this is a WebSocket endpoint, a real client sends an Upgrade handshake)'
+  fetch:
+    state: skipped
+    detail: auth=api_key, no creds in env; also WebSocket-only, needs a plugin — see notes
+    layer: null
+    checked_at: '2026-08-08'
 - id: global_fishing_watch
   name: Global Fishing Watch API (trafic & pêche AIS)
   type: rest
@@ -2757,6 +3208,7 @@
   coverage: global
   themes:
   - transport
+  - maritime
   - ocean
   - biodiversity
   auth: api_key
@@ -2769,9 +3221,9 @@
     title: Vessel identity search (AIS)
   - id: events
     title: Encounters, loitering, port visits, fishing events
-  notes: Global AIS-based vessel tracking and apparent fishing effort. Free API token required (Bearer header; register
-    at globalfishingwatch.org). 4wings/report returns gridded activity and events return point/track features —
-    needs a plugin for clean geo parsing.
+  notes: '[maritime · near-real-time & historical] Global AIS-based vessel tracking and apparent fishing effort.
+    Free API token required (Bearer header; register at globalfishingwatch.org). 4wings/report returns gridded activity
+    and events return point/track features — needs a plugin for clean geo parsing.'
   status:
     state: auth_required
     latency_ms: 244
@@ -2790,11 +3242,12 @@
   coverage: usa
   themes:
   - transport
+  - maritime
   - ocean
   - infrastructure
   auth: none
-  notes: 'US AIS vessel-traffic archive (NOAA/BOEM): yearly/daily AIS point tracks and vessel-transit-count rasters
-    for US waters. Bulk download (CSV/GeoTIFF), not a live API.'
+  notes: '[maritime · historical archive, not real-time] US AIS vessel-traffic archive (NOAA/BOEM): yearly/daily
+    AIS point tracks and vessel-transit-count rasters for US waters. Bulk download (CSV/GeoTIFF), not a live API.'
   status:
     state: ok
     latency_ms: 1000
@@ -3190,7 +3643,10 @@
     title: Point forecast (latitude/longitude, hourly/daily variables, 16 days)
   notes: 'Free weather API, no key: forecasts (16 days) and, on archive-api.open-meteo.com/v1/archive, historical
     reanalysis since 1940. Point-based (latitude/longitude params), returns JSON time-series arrays — no bbox and
-    not per-record lon/lat, so registered for discovery; fetch it client-side or via a plugin.'
+    not per-record lon/lat, so registered for discovery; fetch it client-side or via a plugin. `models=` selects
+    a specific NWP instead of the multi-model blend, e.g. Météo-France''s meteofrance_arome_france_hd (1.5 km, France)
+    and meteofrance_arpege_europe (Iberia/wider Europe) — a useful pairing for a fine-grained 10 m wind layer,
+    falling back to `best_match` outside AROME/ARPEGE coverage.'
   status:
     state: ok
     latency_ms: 153
@@ -3369,6 +3825,7 @@
   coverage: global
   themes:
   - transport
+  - maritime
   - economy
   - ocean
   auth: none
@@ -3397,8 +3854,8 @@
       limit_param: resultRecordCount
       page_size: 1000
       max_records: 5000
-  notes: 'portwatch.imf.org open data (ArcGIS Online, f=geojson): AIS-derived port activity and trade disruption
-    monitoring by the IMF and Oxford.'
+  notes: '[maritime · daily aggregate, not real-time] portwatch.imf.org open data (ArcGIS Online, f=geojson): AIS-derived
+    port activity and trade disruption monitoring by the IMF and Oxford.'
   status:
     state: ok
     latency_ms: 268
@@ -3748,6 +4205,42 @@
     layer: json/ovation_aurora_latest.json
     checked_at: '2026-08-08'
     count: 0
+- id: celestrak
+  name: CelesTrak (éléments orbitaux satellites)
+  type: rest
+  endpoint: https://celestrak.org/NORAD/elements/gp.php
+  provider: CelesTrak (Dr. T.S. Kelso)
+  coverage: global
+  themes:
+  - satellite
+  auth: none
+  test:
+    url: https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=json
+  layers:
+  - id: gp.php?GROUP=stations&FORMAT=json
+    title: Space stations (ISS, Tiangong...) orbital elements
+  - id: gp.php?GROUP=active&FORMAT=json
+    title: All active satellites (~10,000 objects)
+  - id: gp.php?GROUP=starlink&FORMAT=json
+    title: Starlink constellation
+  - id: gp.php?CATNR={norad_id}&FORMAT=json
+    title: Single object by NORAD catalog number
+  notes: 'Free, no-key orbital element sets (OMM/JSON, GP = "general perturbations", the modern TLE replacement).
+    Records are Keplerian elements (inclination, eccentricity, mean motion...), NOT lon/lat — a ground position
+    at a given instant needs SGP4 propagation (Python `sgp4` package) from the elements plus the requested datetime,
+    so RESTLayer cannot geolocate it directly: registered for discovery, needs a plugin that propagates then geolocates.
+    CelesTrak''s usage policy asks clients to cache results and not re-query more than a few times a day per GROUP/file
+    — element sets update at most once daily, so poll accordingly rather than per-request.'
+  status:
+    state: ok
+    latency_ms: 651
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: orbital elements only (no lon/lat) — needs an SGP4-propagation plugin, see notes
+    layer: null
+    checked_at: '2026-08-08'
 - id: rainviewer
   name: RainViewer precipitation radar (nowcast)
   type: xyz
@@ -3791,15 +4284,16 @@
   coverage: global
   themes:
   - infrastructure
-  - transport
+  - rail
   auth: none
   test:
     url: https://a.tiles.openrailwaymap.org/standard/6/32/22.png
   catalog:
     tileSize: 512
-  notes: Global railway network raster tiles from OSM (standard, maxspeed, signals, gauge styles). Overlay tiles
-    (transparent PNG, served at 512 px); a User-Agent header is required (bare requests get HTTP 403). Underlying
-    vector rail data is queryable via Overpass.
+  notes: '[rail · static infrastructure, no traffic/positions] Global railway network raster tiles from OSM (standard,
+    maxspeed, signals, gauge styles). Overlay tiles (transparent PNG, served at 512 px); a User-Agent header is
+    required (bare requests get HTTP 403). Underlying vector rail data is queryable via Overpass. No live train
+    positions here — see notes elsewhere in this registry if/when a real-time rail source is added.'
   status:
     state: ok
     latency_ms: 177
