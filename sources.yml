@@ -1,0 +1,3888 @@
+# Registry of open geospatial data services used by `geodatacatalog` (explorer sub-project).
+# Edit this file to add sources; SOURCES.md is GENERATED from it.
+# Run `geodatacatalog check` to refresh the status fields.
+- id: earth_search
+  name: Earth Search (Element 84)
+  type: stac
+  endpoint: https://earth-search.aws.element84.com/v1
+  provider: Element 84 / AWS Open Data
+  coverage: global
+  themes:
+  - satellite
+  - imagery
+  - elevation
+  auth: none
+  test:
+    collection: sentinel-2-l2a
+  notes: Sentinel-2 L2A COG, Sentinel-1 GRD, Landsat C2L2, NAIP, Copernicus DEM. API + Sentinel-2/DEM free & anonymous,
+    but Sentinel-1 GRD (s3://sentinel-s1-l1c) and Landsat C2L2 (s3://usgs-landsat) are REQUESTER-PAYS — need AWS
+    creds + requester-pays. For a free Sentinel-1 GRD in Europe use cop_dataspace instead.
+  status:
+    state: ok
+    latency_ms: 4087
+    checked_at: '2026-08-08'
+    detail: STAC /collections OK
+  fetch:
+    state: ok
+    detail: 25 STAC item(s)
+    layer: sentinel-2-l2a
+    checked_at: '2026-08-08'
+    count: 25
+- id: planetary_computer
+  name: Microsoft Planetary Computer
+  type: stac
+  endpoint: https://planetarycomputer.microsoft.com/api/stac/v1
+  provider: Microsoft
+  coverage: global
+  themes:
+  - satellite
+  - imagery
+  - landcover
+  - climate
+  - elevation
+  auth: none
+  test:
+    collection: sentinel-2-l2a
+  notes: 126+ collections (incl. esa-worldcover 10 m land cover, cop-dem-glo-30 DEM). Assets are signed automatically
+    (free, no account) when the planetary-computer package is installed — no credentials needed.
+  status:
+    state: ok
+    latency_ms: 1526
+    checked_at: '2026-08-08'
+    detail: STAC /collections OK
+  fetch:
+    state: ok
+    detail: 47 STAC item(s)
+    layer: sentinel-2-l2a
+    checked_at: '2026-08-08'
+    count: 47
+- id: gee
+  name: Google Earth Engine (catalogue public)
+  type: stac
+  endpoint: https://earthengine-stac.storage.googleapis.com/catalog/catalog.json
+  provider: Google
+  coverage: global
+  themes:
+  - satellite
+  - imagery
+  - landcover
+  - elevation
+  - climate
+  - fire
+  - water
+  auth: oauth
+  auth_url: https://code.earthengine.google.com/register
+  test:
+    url: https://earthengine-stac.storage.googleapis.com/catalog/catalog.json
+  layers:
+  - id: COPERNICUS/S2_SR_HARMONIZED
+    title: Sentinel-2 SR harmonisé (10 m)
+  - id: LANDSAT/LC09/C02/T1_L2
+    title: Landsat 9 Collection 2 niveau 2
+  - id: GOOGLE/DYNAMICWORLD/V1
+    title: Dynamic World — occupation du sol 10 m quasi temps réel
+  - id: ESA/WorldCover/v200
+    title: ESA WorldCover 2021 (10 m)
+  - id: COPERNICUS/DEM/GLO30
+    title: Copernicus DEM GLO-30
+  - id: JRC/GSW1_4/GlobalSurfaceWater
+    title: JRC Global Surface Water
+  - id: ECMWF/ERA5_LAND/HOURLY
+    title: ERA5-Land réanalyse horaire
+  - id: UCSB-CHG/CHIRPS/DAILY
+    title: CHIRPS précipitations quotidiennes
+  - id: MODIS/061/MOD14A1
+    title: MODIS anomalies thermiques / feux (1 km)
+  discover:
+    dataset_list: https://raw.githubusercontent.com/samapriya/Earth-Engine-Datasets-List/master/gee_catalog.json
+  notes: 'Catalogue public Earth Engine (~900 datasets) publié en STAC statique. `discover` cherche par mot-clé
+    dans la liste des datasets; le résultat est un id Earth Engine (ex. COPERNICUS/S2_SR_HARMONIZED) à utiliser
+    avec la bibliothèque earthengine-api (ee.ImageCollection(id)) — pas de fetch direct via geodatacatalog. Accès
+    données: compte Google + projet Cloud (gratuit usage non commercial), EARTHENGINE_PROJECT + GOOGLE_APPLICATION_CREDENTIALS
+    dans .env.'
+  status:
+    state: ok
+    latency_ms: 261
+    checked_at: '2026-08-08'
+    detail: STAC /collections OK
+  fetch:
+    state: auth_required
+    detail: auth=oauth, no creds in env
+    layer: null
+    checked_at: '2026-08-08'
+- id: gee_community
+  name: GEE Community Catalog (datasets communautaires Earth Engine)
+  type: registry
+  endpoint: https://gee-community-catalog.org
+  provider: Samapriya Roy / communauté (awesome-gee-community-datasets)
+  coverage: global
+  themes:
+  - meta
+  - forest
+  - landcover
+  - elevation
+  - water
+  - ocean
+  - fire
+  - climate
+  - weather
+  - soil
+  - agriculture
+  - biodiversity
+  - population
+  - infrastructure
+  auth: oauth
+  auth_url: https://code.earthengine.google.com/register
+  test:
+    url: https://raw.githubusercontent.com/samapriya/awesome-gee-community-datasets/master/community_datasets.json
+  discover:
+    dataset_list: https://raw.githubusercontent.com/samapriya/awesome-gee-community-datasets/master/community_datasets.json
+  notes: Catalogue communautaire Earth Engine (~4400 datasets hébergés dans EE sous projects/sat-io/..., ex. canopée
+    Meta/WRI 1 m — gee-community-catalog.org/projects/meta_trees), complémentaire du catalogue public Google (source
+    `gee`) qui ne les référence pas. `discover` cherche par mot-clé dans la liste JSON du dépôt awesome-gee-community-datasets;
+    le résultat est un id Earth Engine (ex. projects/sat-io/open-datasets/facebook/meta-canopy-height) à utiliser
+    avec la bibliothèque earthengine-api — pas de fetch direct via geodatacatalog. Mêmes credentials que la source
+    gee.
+  status:
+    state: ok
+    latency_ms: 403
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: cop_dataspace
+  name: Copernicus Data Space STAC
+  type: stac
+  endpoint: https://stac.dataspace.copernicus.eu/v1
+  provider: ESA / Copernicus
+  coverage: global
+  themes:
+  - satellite
+  - imagery
+  - climate
+  auth: none
+  auth_url: https://eodata-s3keysmanager.dataspace.copernicus.eu/
+  test:
+    collection: sentinel-2-l2a
+  catalog:
+    auth:
+      type: AwsAuth
+      s3_endpoint: eodata.dataspace.copernicus.eu
+      https: true
+      virtual_hosting: false
+      gdal_unsafe_ssl: true
+      credentials:
+        aws_access_key_id: ${CDSE_S3_ACCESS_KEY}
+        aws_secret_access_key: ${CDSE_S3_SECRET_KEY}
+        region_name: default
+  notes: 'Official ESA archive — Sentinel 1/2/3/5P. Data assets live on the eodata S3 store: set CDSE_S3_ACCESS_KEY
+    / CDSE_S3_SECRET_KEY (free, from the S3 keys manager) before fetching, or reads fail with "AWS Access Key Id
+    does not exist" / empty rasters.'
+  status:
+    state: ok
+    latency_ms: 1375
+    checked_at: '2026-08-08'
+    detail: STAC /collections OK
+  fetch:
+    state: ok
+    detail: 25 STAC item(s)
+    layer: sentinel-2-l2a
+    checked_at: '2026-08-08'
+    count: 25
+- id: usgs_landsatlook
+  name: USGS LandsatLook
+  type: stac
+  endpoint: https://landsatlook.usgs.gov/stac-server
+  provider: USGS
+  coverage: global
+  themes:
+  - satellite
+  - imagery
+  auth: none
+  test:
+    collection: landsat-c2l2-sr
+  notes: Landsat Collection 2
+  status:
+    state: ok
+    latency_ms: 3022
+    checked_at: '2026-08-08'
+    detail: STAC /collections OK
+  fetch:
+    state: ok
+    detail: 57 STAC item(s)
+    layer: landsat-c2l2-sr
+    checked_at: '2026-08-08'
+    count: 57
+- id: nasa_cmr_lpcloud
+  name: NASA CMR-STAC (LPCLOUD)
+  type: stac
+  endpoint: https://cmr.earthdata.nasa.gov/cloudstac/LPCLOUD
+  provider: NASA Earthdata
+  coverage: global
+  themes:
+  - satellite
+  - imagery
+  - elevation
+  - landcover
+  auth: none
+  auth_url: https://urs.earthdata.nasa.gov/users/new
+  notes: HLS, ASTER, SRTM, NASADEM... Reading the data assets needs a free NASA Earthdata login (set up ~/.netrc
+    for urs.earthdata.nasa.gov); without it the COGs come back as a login redirect and the fetch fails.
+  status:
+    state: ok
+    latency_ms: 3113
+    checked_at: '2026-08-08'
+    detail: STAC /collections OK
+  fetch:
+    state: ok
+    detail: 100 STAC item(s)
+    layer: MYD09GA_061
+    checked_at: '2026-08-08'
+    count: 100
+- id: geodes
+  name: GEODES (CNES)
+  type: stac
+  endpoint: https://geodes-portal.cnes.fr/api/stac
+  provider: CNES
+  coverage: france
+  themes:
+  - satellite
+  - imagery
+  - landcover
+  - agriculture
+  auth: api_key
+  test:
+    collection: THEIA_OSO_VECTOR_L3B
+  notes: THEIA products (OSO land cover, LAI, reflectances), Pléiades, SPOT. STAC 1.0.0-beta.2 — pystac_client get_collections()
+    raises STACTypeError, so listing falls back to the raw /collections document. Item search/fetch needs GEODES_API_KEY.
+  status:
+    state: ok
+    latency_ms: 3813
+    checked_at: '2026-08-08'
+    detail: STAC /collections OK
+  fetch:
+    state: auth_required
+    detail: auth=api_key, no creds in env
+    layer: null
+    checked_at: '2026-08-08'
+- id: sentinelhub
+  name: Sentinel Hub — indices & bandes spectrales (CDSE)
+  type: rest
+  endpoint: https://sh.dataspace.copernicus.eu/api/v1/process
+  provider: Copernicus Data Space / Sentinel Hub
+  coverage: global
+  themes:
+  - satellite
+  - imagery
+  - agriculture
+  - forest
+  auth: api_key
+  test:
+    url: https://shapps.dataspace.copernicus.eu/dashboard/
+  layers:
+  - id: NDVI
+    title: NDVI — végétation
+  - id: NDMI
+    title: NDMI — humidité de la végétation
+  - id: NBR
+    title: NBR — indice de brûlure (feux)
+  - id: NDWI
+    title: NDWI — eau / humidité
+  - id: EVI
+    title: EVI — végétation (amélioré)
+  - id: B08
+    title: Bande B08 — proche infrarouge (réflectance)
+  - id: B11
+    title: Bande B11 — SWIR (réflectance)
+  - id: dNBR
+    title: dNBR — différence NBR entre deux dates (sévérité des feux)
+  - id: dNDVI
+    title: dNDVI — différence NDVI entre deux dates (changement de végétation)
+  - id: dBAI
+    title: dBAI — différence BAI entre deux dates (zones brûlées)
+  catalog:
+    plugin: geodata_sentinelhubapi.py
+    free_product: any spyndex Sentinel-2 index (NDVI, NDMI, NBR, MSI, SAVI, BAI, NDRE...), a band (B01-B12, B8A),
+      or its d-prefixed two-date difference (dNBR, dBAI... = index[date2] - index[date1] over a datetime range;
+      a single date compares that month to the month before)
+    credentials:
+      client_id: ${SH_CDSE_CLIENT_ID}
+      client_secret: ${SH_CDSE_CLIENT_SECRET}
+  notes: THE source for named spectral INDICES — any spyndex Sentinel-2 index (NDVI, NDMI, NBR, NDWI, EVI, SAVI...)
+    — and single BANDS (B01-B12), computed on the fly from Sentinel-2 L2A (SCL cloud-masked) via the geodata_sentinelhubapi.py
+    plugin. productType = the index/band name; prefix it with d (dNBR, dBAI, dNDVI...) for the CHANGE between the
+    two ends of the datetime range (index[date2] - index[date1], e.g. burn severity). STAC collections only expose
+    RAW bands, not named indices — use THIS for an index. Needs CDSE_CLIENT_ID/CDSE_CLIENT_SECRET.
+  status:
+    state: ok
+    latency_ms: 247
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: auth_required
+    detail: auth=api_key, no creds in env
+    layer: null
+    checked_at: '2026-08-08'
+- id: dea_africa
+  name: Digital Earth Africa
+  type: stac
+  endpoint: https://explorer.digitalearth.africa/stac
+  provider: Digital Earth Africa
+  coverage: africa
+  themes:
+  - satellite
+  - imagery
+  - landcover
+  - water
+  auth: none
+  catalog:
+    auth:
+      no-sign-request: true
+      region: af-south-1
+  status:
+    state: fail
+    latency_ms: 3320
+    checked_at: '2026-08-08'
+    detail: 200 but no STAC JSON
+  fetch:
+    state: ok
+    detail: 12 STAC item(s)
+    layer: alos_palsar_mosaic
+    checked_at: '2026-06-29'
+    count: 12
+- id: dea_australia
+  name: Digital Earth Australia
+  type: stac
+  endpoint: https://explorer.dea.ga.gov.au/stac
+  provider: Geoscience Australia
+  coverage: australia
+  themes:
+  - satellite
+  - imagery
+  - landcover
+  auth: none
+  status:
+    state: ok
+    latency_ms: 902
+    checked_at: '2026-08-08'
+    detail: STAC /collections OK
+  fetch:
+    state: ok
+    detail: 21 STAC item(s)
+    layer: ga_s2am_fmc
+    checked_at: '2026-08-08'
+    count: 21
+- id: ceda_stac
+  name: CEDA STAC (UK)
+  type: stac
+  endpoint: https://api.stac.ceda.ac.uk
+  provider: CEDA
+  coverage: global
+  themes:
+  - satellite
+  - climate
+  - weather
+  auth: none
+  notes: Atmospheric and EO archives
+  status:
+    state: ok
+    latency_ms: 237
+    checked_at: '2026-08-08'
+    detail: STAC /collections OK
+  fetch:
+    state: empty
+    detail: 0 STAC item(s)
+    layer: ceda_flights
+    checked_at: '2026-08-08'
+    count: 0
+- id: capella_opendata
+  name: Capella Space Open Data (SAR)
+  type: registry
+  endpoint: https://capella-open-data.s3.us-west-2.amazonaws.com/stac/catalog.json
+  provider: Capella Space
+  coverage: global
+  themes:
+  - satellite
+  - imagery
+  auth: none
+  notes: Static STAC catalog — SAR imagery samples
+  status:
+    state: ok
+    latency_ms: 617
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: ign_wfs
+  name: IGN Géoplateforme WFS
+  type: wfs
+  endpoint: https://data.geopf.fr/wfs/ows
+  provider: IGN
+  coverage: france
+  themes:
+  - admin
+  - infrastructure
+  - forest
+  - agriculture
+  - water
+  - landcover
+  - urban
+  auth: none
+  test:
+    layer: ADMINEXPRESS-COG.LATEST:commune
+  notes: BD TOPO, cadastre, RPG, ZNIEFF/Natura 2000, BD Forêt... (hundreds of layers)
+  status:
+    state: ok
+    latency_ms: 441
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: 8 feature(s)
+    layer: ADMINEXPRESS-COG.LATEST:commune
+    checked_at: '2026-08-08'
+    count: 8
+- id: marine_regions
+  name: Marine Regions (VLIZ) WFS
+  type: wfs
+  endpoint: https://geo.vliz.be/geoserver/MarineRegions/wfs
+  provider: VLIZ / Marine Regions
+  coverage: global
+  themes:
+  - ocean
+  - water
+  auth: none
+  test:
+    layer: MarineRegions:goas
+  notes: 'Named sea/ocean polygons — Global Oceans & Seas (MarineRegions:goas), IHO Sea Areas (MarineRegions:iho).
+    Also the maritime-boundary layers: Exclusive Economic Zones / ZEE (MarineRegions:eez, MarineRegions:eez_boundaries)
+    and the 12-nautical-mile territorial seas / limites des 12 milles marins (MarineRegions:eez_12nm, plus eez_24nm
+    contiguous zone). Ideal AOI source for marine areas (e.g. Mediterranean).'
+  status:
+    state: ok
+    latency_ms: 137
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: 3 feature(s)
+    layer: MarineRegions:goas
+    checked_at: '2026-08-08'
+    count: 3
+- id: ign_wms_raster
+  name: IGN Géoplateforme WMS raster
+  type: wms
+  endpoint: https://data.geopf.fr/wms-r/wms
+  provider: IGN
+  coverage: france
+  themes:
+  - basemap
+  - imagery
+  - elevation
+  - landcover
+  auth: none
+  test:
+    layer: ORTHOIMAGERY.ORTHOPHOTOS
+  notes: Orthophotos, Plan IGN, altitude...
+  status:
+    state: ok
+    latency_ms: 130
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 64 × 64
+    layer: ORTHOIMAGERY.ORTHOPHOTOS
+    checked_at: '2026-08-08'
+- id: ign_wms_vector
+  name: IGN Géoplateforme WMS vecteur
+  type: wms
+  endpoint: https://data.geopf.fr/wms-v/ows
+  provider: IGN
+  coverage: france
+  themes:
+  - basemap
+  - admin
+  - infrastructure
+  auth: none
+  status:
+    state: ok
+    latency_ms: 255
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 146 × 105
+    layer: ACADEMIES.2015
+    checked_at: '2026-08-08'
+- id: ign_wmts
+  name: IGN Géoplateforme WMTS
+  type: wmts
+  endpoint: https://data.geopf.fr/wmts
+  provider: IGN
+  coverage: france
+  themes:
+  - basemap
+  - imagery
+  - forest
+  - landcover
+  auth: none
+  test:
+    layer: ORTHOIMAGERY.ORTHOPHOTOS
+  notes: Orthophotos, Plan IGN v2, BD Forêt v2, Corine Land Cover
+  status:
+    state: ok
+    latency_ms: 122
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 512 × 512
+    layer: ORTHOIMAGERY.ORTHOPHOTOS
+    checked_at: '2026-08-08'
+- id: ign_alti
+  name: IGN Géoplateforme altimétrie (REST)
+  type: rest
+  endpoint: https://data.geopf.fr/altimetrie
+  provider: IGN
+  coverage: france
+  themes:
+  - elevation
+  auth: none
+  test:
+    url: https://data.geopf.fr/altimetrie/1.0/calcul/alti/rest/elevation.json?lon=1.44&lat=43.6&resource=ign_rge_alti_wld
+  layers:
+  - id: 1.0/calcul/alti/rest/elevation.json
+    title: Élévation en un ou plusieurs points (lon/lat)
+  catalog:
+    pointQuery: true
+    bboxParams:
+      lon: '{cx}'
+      lat: '{cy}'
+    params:
+      resource: ign_rge_alti_wld
+  notes: RGE Alti point elevation API (the old WCS endpoint was retired). Point query — samples the bbox centre
+    (lon/lat), not a bbox.
+  status:
+    state: ok
+    latency_ms: 182
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: ok
+    detail: 1 feature(s)
+    layer: 1.0/calcul/alti/rest/elevation.json
+    checked_at: '2026-08-08'
+    count: 1
+- id: brgm_geologie
+  name: BRGM géologie 1:1M (INSPIRE)
+  type: wfs
+  endpoint: http://mapsref.brgm.fr/wxs/1GG/BRGM_1M_INSPIRE_geolUnits_geolFaults
+  provider: BRGM
+  coverage: france
+  themes:
+  - geology
+  auth: none
+  test:
+    layer: gmlsp:GE_GeologicFault_BRGM_EN_1M_Surface
+  notes: Geological units and faults
+  status:
+    state: ok
+    latency_ms: 134
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: 1 feature(s)
+    layer: gmlsp:GE_GeologicFault_BRGM_EN_1M_Surface
+    checked_at: '2026-08-08'
+    count: 1
+- id: brgm_infoterre
+  name: BRGM InfoTerre géoservices
+  type: wms
+  endpoint: http://geoservices.brgm.fr/geologie
+  provider: BRGM
+  coverage: france
+  themes:
+  - geology
+  auth: none
+  status:
+    state: ok
+    latency_ms: 2169
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 146 × 105
+    layer: GEOSERVICES_GEOLOGIE
+    checked_at: '2026-08-08'
+- id: brgm_risques
+  name: Géorisques (risques naturels)
+  type: wms
+  endpoint: https://www.georisques.gouv.fr/services
+  provider: BRGM / Géorisques
+  coverage: france
+  themes:
+  - hazards
+  - geology
+  - water
+  auth: none
+  notes: Risques naturels FR (inondation, mouvements de terrain, retrait-gonflement des argiles, séismes, cavités...).
+    WMS Géorisques — remplace l'ancien geoservices.brgm.fr/risques (fermé). Couches listées en live via GetCapabilities.
+  status:
+    state: ok
+    latency_ms: 2079
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 146 × 105
+    layer: GEORISQUES_SERVICES
+    checked_at: '2026-08-08'
+- id: sandre
+  name: SANDRE Eau France (géo)
+  type: wfs
+  endpoint: https://services.sandre.eaufrance.fr/geo/sandre
+  provider: SANDRE / OFB
+  coverage: france
+  themes:
+  - water
+  auth: none
+  test:
+    layer: sa:CoursEau_FXX_Topage2025
+  notes: BD Topage — water bodies, watercourses
+  status:
+    state: ok
+    latency_ms: 1063
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: 30 feature(s)
+    layer: sa:CoursEau_FXX_Topage2025
+    checked_at: '2026-08-08'
+    count: 30
+- id: sandre_mdo
+  name: SANDRE masses d'eau
+  type: wfs
+  endpoint: https://services.sandre.eaufrance.fr/geo/mdo
+  provider: SANDRE / OFB
+  coverage: france
+  themes:
+  - water
+  auth: none
+  status:
+    state: ok
+    latency_ms: 254
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: 1 feature(s)
+    layer: sa:BassinDCE
+    checked_at: '2026-08-08'
+    count: 1
+- id: hubeau
+  name: Hub'Eau (APIs eau France)
+  type: rest
+  endpoint: https://hubeau.eaufrance.fr/api
+  provider: BRGM / OFB
+  coverage: france
+  themes:
+  - water
+  auth: none
+  test:
+    url: https://hubeau.eaufrance.fr/api/v1/niveaux_nappes/stations?size=1&format=json
+  layers:
+  - id: v1/niveaux_nappes/stations
+    title: Piézomètres (stations, lon/lat = x/y)
+  - id: v1/niveaux_nappes/chroniques
+    title: Niveaux de nappes (chroniques)
+  - id: v2/hydrometrie/referentiel/stations
+    title: Stations hydrométriques
+  - id: v2/hydrometrie/observations_tr
+    title: Hydrométrie temps réel (débit/hauteur)
+  - id: v2/qualite_rivieres/station_pc
+    title: Qualité des rivières — stations physico-chimie
+  - id: v1/temperature/station
+    title: Température des cours d'eau — stations
+  - id: v1/etat_piscicole/stations
+    title: État piscicole — stations de pêche
+  - id: v1/prelevements/referentiel/points_prelevement
+    title: Points de prélèvement d'eau
+  catalog:
+    bboxParams:
+      bbox: '{minx},{miny},{maxx},{maxy}'
+    params:
+      format: geojson
+      size: 200
+  notes: Hydrometry, piezometry, water quality, fish... (station endpoints support bbox + format=geojson)
+  status:
+    state: ok
+    latency_ms: 124
+    checked_at: '2026-08-08'
+    detail: HTTP 206
+  fetch:
+    state: ok
+    detail: 75 feature(s)
+    layer: v1/niveaux_nappes/stations
+    checked_at: '2026-08-08'
+    count: 75
+- id: shom
+  name: SHOM (littoral & marine)
+  type: wms
+  endpoint: https://services.data.shom.fr/INSPIRE/wms/r
+  provider: SHOM
+  coverage: france
+  themes:
+  - ocean
+  - basemap
+  auth: none
+  notes: Nautical charts, coastal data
+  status:
+    state: ok
+    latency_ms: 1185
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 64 × 64
+    layer: BATHYELLI_ZH_PYR_PNG_3857_WMSR
+    checked_at: '2026-08-08'
+- id: inpn_odata
+  name: INPN / MNHN biodiversité
+  type: rest
+  endpoint: https://odata-inpn.mnhn.fr
+  provider: MNHN
+  coverage: france
+  themes:
+  - biodiversity
+  auth: none
+  status:
+    state: ok
+    latency_ms: 316
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: no testable layer (REST without curated layers)
+    layer: null
+    checked_at: '2026-08-08'
+- id: geocatalogue_fr
+  name: Géocatalogue national (BRGM)
+  type: csw
+  endpoint: https://www.geocatalogue.fr/geonetwork/srv/fre/csw
+  provider: BRGM (Géocatalogue national)
+  coverage: france
+  themes:
+  - meta
+  auth: none
+  notes: French national geographic metadata catalogue, operated by BRGM (datasets + WMS/WFS services)
+  status:
+    state: ok
+    latency_ms: 136
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: skipped
+    detail: 'csw: metadata catalogue — use `discover`, not fetch; see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: effis
+  name: Copernicus EFFIS (feux de forêt)
+  type: wms
+  endpoint: https://maps.effis.emergency.copernicus.eu/effis
+  provider: Copernicus Emergency
+  coverage: europe
+  themes:
+  - fire
+  - hazards
+  - forest
+  auth: none
+  test:
+    layer: fuel_map
+  notes: 'Fire info — WMS layers use prefixed codes, not plain words: fire danger indices are mf010.fwi / mf010.ffmc
+    / mf010.dmc / mf010.dc / mf010.isi / mf010.bui (NOT bare "fwi"), hs (active fire hot spots: modis/viirs/noaa),
+    ba (burnt areas), fuel_map. Grep these codes, not "fire". GetMap REQUIRES an explicit STYLES= parameter, even
+    empty (MapServer 8). TIME-dimensioned layers (fire danger indices) silently render BLANK without an explicit
+    TIME=<date>: the server default is stale (2021-01-01) — always pass a recent date. EXCEPTION — HOTSPOTS (all.hs,
+    viirs.hs, modis.hs...): they declare a time dimension but an explicit TIME= renders EMPTY everywhere; request
+    them WITHOUT TIME to get the current detections. BURNT AREAS: this is a raster-only WMS — the .poly (polygon)
+    variants render BLANK through GetMap (vectors need WFS/download, not exposed here), so for a visible map or
+    a fetch use the RASTER layer modis.ba.<year> (e.g. modis.ba.2024) or modis.ba.point.<year>, NEVER modis.ba.poly.*
+    . effis.nrt.ba is BROKEN server-side (checked 2026-07-13): the group includes effis.nrt.ba.point whose GetMap
+    answers HTTP 200 text/xml ServiceException "msPostGISLayerWhichShapes(): Query error" — for near-real-time burnt
+    areas use nrt.ba.today / nrt.ba.week on the gwis endpoint (source id: gwis) instead.'
+  status:
+    state: ok
+    latency_ms: 164
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 146 × 105
+    layer: fuel_map
+    checked_at: '2026-08-08'
+- id: gwis
+  name: Copernicus GWIS (feux mondiaux)
+  type: wms
+  endpoint: https://maps.effis.emergency.copernicus.eu/gwis
+  provider: Copernicus Emergency
+  coverage: global
+  themes:
+  - fire
+  - hazards
+  auth: none
+  test:
+    layer: ecmwf.fwi
+  notes: 'Global fire info (MapServer WMS, same family as effis; GetMap REQUIRES an explicit STYLES= parameter,
+    even empty, and TIME-dimensioned layers render BLANK without an explicit recent TIME=<date>; hotspots hs layers
+    are the exception: request them WITHOUT TIME). NRT BURNT AREAS are SCALE-DEPENDENT: the bare nrt.ba group only
+    draws at world zooms (z<=2), .point variants only at low zooms, .poly variants only from ~z9 — a blank tile
+    at one zoom does NOT mean "no data". For a visible map use the date-windowed groups nrt.ba.today / nrt.ba.week
+    / nrt.ba.month / nrt.ba.season (point+poly combined with scale rules, what the official EFFIS viewer uses),
+    no TIME needed; for composites use mcd64a1.* (e.g. mcd64a1.annual_composite.c12, mcd64a1.fire_frequency). These
+    windowed groups render SLOWLY on first hit (~15-30 s per tile, then instant from the server cache): tell the
+    user to leave the map still for ~30 s — browser "GET aborted" on their tiles just means MapLibre cancelled a
+    pending tile on pan/zoom, not a server failure. gwis.globfire.finalperim is BROKEN server-side (checked 2026-07-13):
+    every GetMap answers HTTP 200 text/xml ServiceException "msPostGISLayerWhichShapes(): Query error" regardless
+    of BBOX/TIME/CRS — use nrt.ba.today/.week or the mcd64a1.* composites for burnt areas instead.'
+  status:
+    state: ok
+    latency_ms: 154
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 146 × 105
+    layer: ecmwf.fwi
+    checked_at: '2026-08-08'
+- id: eea_discomap
+  name: EEA Discomap (ArcGIS REST)
+  type: registry
+  endpoint: https://image.discomap.eea.europa.eu/arcgis/rest/services
+  provider: European Environment Agency
+  coverage: europe
+  themes:
+  - landcover
+  - water
+  - biodiversity
+  - meta
+  auth: none
+  status:
+    state: ok
+    latency_ms: 1215
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: eea_clc2018
+  name: Corine Land Cover 2018 (EEA)
+  type: wms
+  endpoint: https://image.discomap.eea.europa.eu/arcgis/services/Corine/CLC2018_WM/MapServer/WMSServer
+  provider: European Environment Agency
+  coverage: europe
+  themes:
+  - landcover
+  auth: none
+  test:
+    layer: 1,2,3,4,5,7,8,9,10,11,12,13
+  notes: 'ArcGIS MapServer WMS, SCALE-TIERED: each numbered layer (1..13) is visible only at one zoom level, so
+    a single numbered layer renders transparent at other scales. Request them ALL together — layer "1,2,3,4,5,7,8,9,10,11,12,13"
+    (comma-separated GetMap) — to display Corine Land Cover at every zoom. Do NOT propose a single numbered layer.'
+  status:
+    state: ok
+    latency_ms: 1266
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 146 × 105
+    layer: 1,2,3,4,5,7,8,9,10,11,12,13
+    checked_at: '2026-08-08'
+- id: eea_natura2000
+  name: Natura 2000 (EEA bio Discomap)
+  type: registry
+  endpoint: https://bio.discomap.eea.europa.eu/arcgis/rest/services
+  provider: European Environment Agency
+  coverage: europe
+  themes:
+  - biodiversity
+  auth: none
+  status:
+    state: ok
+    latency_ms: 813
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: cmems_wmts
+  name: Copernicus Marine WMTS
+  type: wmts
+  endpoint: https://wmts.marine.copernicus.eu/teroWmts
+  provider: Copernicus Marine
+  coverage: global
+  themes:
+  - ocean
+  - climate
+  auth: none
+  notes: Visualisation tiles; full data via data.marine.copernicus.eu (account)
+  status:
+    state: ok
+    latency_ms: 305
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 512 × 512
+    layer: BLKSEA_OMI_SEASTATE_extreme_var_swh_mean_and_anomaly/blksea_omi_seastate_extreme_var_swh_mean_and_anomaly_202112/swh_percentile99_anom
+    checked_at: '2026-08-08'
+- id: gdacs
+  name: GDACS (alertes catastrophes)
+  type: rest
+  endpoint: https://www.gdacs.org/gdacsapi
+  provider: UN / EC JRC
+  coverage: global
+  themes:
+  - hazards
+  auth: none
+  test:
+    url: https://www.gdacs.org/gdacsapi/api/events/geteventlist/MAP
+  layers:
+  - id: api/events/geteventlist/MAP
+    title: Current disaster events (GeoJSON)
+  status:
+    state: ok
+    latency_ms: 451
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: ok
+    detail: 233 feature(s)
+    layer: api/events/geteventlist/MAP
+    checked_at: '2026-08-08'
+    count: 233
+- id: open_maps_europe
+  name: Open Maps For Europe
+  type: registry
+  endpoint: https://www.mapsforeurope.org/
+  provider: EuroGeographics
+  coverage: europe
+  themes:
+  - basemap
+  - admin
+  auth: none
+  status:
+    state: ok
+    latency_ms: 194
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: emodnet_bathymetry
+  name: EMODnet Bathymetry (WMS)
+  type: wms
+  endpoint: https://ows.emodnet-bathymetry.eu/wms
+  provider: EMODnet
+  coverage: europe
+  themes:
+  - ocean
+  - elevation
+  auth: none
+  notes: European bathymetry DTM (also /wfs and /wcs on the same host)
+  status:
+    state: ok
+    latency_ms: 232
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 146 × 107
+    layer: coastlines
+    checked_at: '2026-08-08'
+- id: emodnet_bathymetry_wcs
+  name: EMODnet Bathymetry (WCS)
+  type: wcs
+  endpoint: https://ows.emodnet-bathymetry.eu/wcs
+  provider: EMODnet
+  coverage: europe
+  themes:
+  - ocean
+  - elevation
+  auth: none
+  status:
+    state: ok
+    latency_ms: 130
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: fail
+    detail: 'HTTPError: 404 Client Error: Not Found for url: https://ows.emodnet-bathymetry.eu/wcs?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=emodnet__mean&FORMAT=image/tiff&SUBSET=Long(4.0,4.4)&SUBS'
+    layer: emodnet__mean
+    checked_at: '2026-08-08'
+- id: emodnet_biology
+  name: EMODnet Biology
+  type: wfs
+  endpoint: https://geo.vliz.be/geoserver/Emodnetbio/wfs
+  provider: EMODnet / VLIZ
+  coverage: europe
+  themes:
+  - ocean
+  - biodiversity
+  auth: none
+  status:
+    state: ok
+    latency_ms: 126
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: empty
+    detail: 0 feature(s)
+    layer: Emodnetbio:cti_macroalgae_nw_spain
+    checked_at: '2026-08-08'
+    count: 0
+- id: emodnet_habitats
+  name: EMODnet Seabed Habitats (EUSeaMap)
+  type: wms
+  endpoint: https://ows.emodnet-seabedhabitats.eu/geoserver/emodnet_open/wms
+  provider: EMODnet
+  coverage: europe
+  themes:
+  - ocean
+  - biodiversity
+  - landcover
+  auth: none
+  status:
+    state: ok
+    latency_ms: 243
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 146 × 107
+    layer: coralligenous_platforms_group
+    checked_at: '2026-08-08'
+- id: emodnet_human
+  name: EMODnet Human Activities
+  type: wfs
+  endpoint: https://ows.emodnet-humanactivities.eu/wfs
+  provider: EMODnet
+  coverage: europe
+  themes:
+  - ocean
+  - transport
+  - infrastructure
+  auth: none
+  test:
+    layer: emodnet:portvessels
+  notes: 'Human uses of the sea (WFS vectors): port vessels (portvessels, portvesselsbytype), fishing effort by
+    vessel type, pipelines, wind farms, aggregates... AIS vessel/route density grids are the raster product on the
+    WMS — see emodnet_vessel_density.'
+  status:
+    state: ok
+    latency_ms: 239
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: empty
+    detail: 0 feature(s)
+    layer: emodnet:portvessels
+    checked_at: '2026-08-08'
+    count: 0
+- id: emodnet_vessel_density
+  name: EMODnet Vessel Density (trafic maritime AIS)
+  type: wms
+  endpoint: https://ows.emodnet-humanactivities.eu/wms
+  provider: EMODnet Human Activities
+  coverage: europe
+  themes:
+  - transport
+  - ocean
+  - infrastructure
+  auth: none
+  test:
+    layer: vesseldensity_00
+  notes: Monthly AIS-derived vessel & route density grids for all European seas (open, no auth). Raster layers VesselDensity/RouteDensity
+    and per-ship-type vesseldensity_NN (00=all, then fishing, cargo, tanker, passenger...), each with _avg and _seasonal
+    variants.
+  status:
+    state: ok
+    latency_ms: 260
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 146 × 107
+    layer: vesseldensity_00
+    checked_at: '2026-08-08'
+- id: gebco
+  name: GEBCO global bathymetry
+  type: wms
+  endpoint: https://wms.gebco.net/mapserv
+  provider: GEBCO / BODC
+  coverage: global
+  themes:
+  - ocean
+  - elevation
+  auth: none
+  test:
+    layer: GEBCO_LATEST
+  status:
+    state: ok
+    latency_ms: 173
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 146 × 107
+    layer: GEBCO_LATEST
+    checked_at: '2026-08-08'
+- id: noaa_erddap
+  name: NOAA ERDDAP (CoastWatch)
+  type: registry
+  endpoint: https://coastwatch.pfeg.noaa.gov/erddap/index.html
+  provider: NOAA
+  coverage: global
+  themes:
+  - ocean
+  - climate
+  - weather
+  auth: none
+  notes: Huge oceanographic data server (griddap/tabledap)
+  status:
+    state: ok
+    latency_ms: 933
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: obis
+  name: OBIS (biodiversité marine)
+  type: rest
+  endpoint: https://api.obis.org/v3
+  provider: UNESCO / IOC
+  coverage: global
+  themes:
+  - ocean
+  - biodiversity
+  auth: none
+  test:
+    url: https://api.obis.org/v3/occurrence?size=1
+    bbox: 4.0,42.4,4.4,42.8
+  layers:
+  - id: occurrence
+    title: Marine species occurrences (geometry filter)
+  - id: checklist
+    title: Species checklist for an area
+  - id: statistics
+    title: Summary statistics
+  catalog:
+    bboxParams:
+      geometry: POLYGON(({minx} {miny}, {maxx} {miny}, {maxx} {maxy}, {minx} {maxy}, {minx} {miny}))
+    dataKey: results
+    lonField: decimalLongitude
+    latField: decimalLatitude
+  status:
+    state: ok
+    latency_ms: 1038
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: ok
+    detail: 200 feature(s)
+    layer: occurrence
+    checked_at: '2026-08-08'
+    count: 200
+- id: soilgrids_sand
+  name: ISRIC SoilGrids — sand
+  type: wcs
+  endpoint: https://maps.isric.org/mapserv?map=/map/sand.map
+  provider: ISRIC
+  coverage: global
+  themes:
+  - soil
+  auth: none
+  test:
+    layer: sand_0-5cm_mean
+  notes: 'Other properties use the same pattern: clay, silt, soc, phh2o, nitrogen, bdod, cec...'
+  status:
+    state: ok
+    latency_ms: 6751
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 128 × 128
+    layer: sand_0-5cm_mean
+    checked_at: '2026-08-08'
+- id: soilgrids_clay
+  name: ISRIC SoilGrids — clay
+  type: wcs
+  endpoint: https://maps.isric.org/mapserv?map=/map/clay.map
+  provider: ISRIC
+  coverage: global
+  themes:
+  - soil
+  auth: none
+  test:
+    layer: clay_0-5cm_mean
+  status:
+    state: ok
+    latency_ms: 3926
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 128 × 128
+    layer: clay_0-5cm_mean
+    checked_at: '2026-08-08'
+- id: soilgrids_soc
+  name: ISRIC SoilGrids — organic carbon
+  type: wcs
+  endpoint: https://maps.isric.org/mapserv?map=/map/soc.map
+  provider: ISRIC
+  coverage: global
+  themes:
+  - soil
+  auth: none
+  test:
+    layer: soc_0-5cm_mean
+  status:
+    state: ok
+    latency_ms: 3548
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 128 × 128
+    layer: soc_0-5cm_mean
+    checked_at: '2026-08-08'
+- id: soilgrids_rest
+  name: ISRIC SoilGrids REST API
+  type: rest
+  endpoint: https://rest.isric.org/soilgrids/v2.0
+  provider: ISRIC
+  coverage: global
+  themes:
+  - soil
+  auth: none
+  test:
+    url: https://rest.isric.org/soilgrids/v2.0/properties/query?lon=1.44&lat=43.6&property=clay&depth=0-5cm&value=mean
+  layers:
+  - id: properties/query
+    title: Soil properties at a point (lon/lat, property, depth)
+  - id: classification/query
+    title: WRB soil class at a point
+  catalog:
+    bboxParams:
+      lon: '{cx}'
+      lat: '{cy}'
+    params:
+      property: clay
+      depth: 0-5cm
+      value: mean
+  notes: 'Point query: samples the bbox centre and returns a single GeoJSON Feature (soil properties in properties.layers).
+    Set property/depth/value as needed (clay, sand, soc, phh2o, nitrogen...).'
+  status:
+    state: ok
+    latency_ms: 1183
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: ok
+    detail: 1 feature(s)
+    layer: properties/query
+    checked_at: '2026-08-08'
+    count: 1
+- id: openlandmap
+  name: OpenLandMap STAC
+  type: registry
+  endpoint: https://s3.eu-central-1.wasabisys.com/stac/openlandmap/catalog.json
+  provider: OpenGeoHub
+  coverage: global
+  themes:
+  - soil
+  - landcover
+  - climate
+  auth: none
+  status:
+    state: ok
+    latency_ms: 243
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: usda_sda
+  name: USDA Soil Data Access
+  type: rest
+  endpoint: https://sdmdataaccess.sc.egov.usda.gov
+  provider: USDA
+  coverage: usa
+  themes:
+  - soil
+  auth: none
+  status:
+    state: ok
+    latency_ms: 609
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: no testable layer (REST without curated layers)
+    layer: null
+    checked_at: '2026-08-08'
+- id: usgs_3dep
+  name: USGS 3DEP Elevation (WCS)
+  type: wcs
+  endpoint: https://elevation.nationalmap.gov/arcgis/services/3DEPElevation/ImageServer/WCSServer
+  provider: USGS
+  coverage: usa
+  themes:
+  - elevation
+  auth: none
+  status:
+    state: ok
+    latency_ms: 1679
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: fail
+    detail: 'HTTPError: 404 Client Error: Not Found for url: https://elevation.nationalmap.gov/arcgis/services/3DEPElevation/ImageServer/WCSServer?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=DEP3Eleva'
+    layer: DEP3Elevation
+    checked_at: '2026-08-08'
+- id: opentopography
+  name: OpenTopography Global DEM API
+  type: rest
+  endpoint: https://portal.opentopography.org/API/globaldem
+  provider: OpenTopography
+  coverage: global
+  themes:
+  - elevation
+  auth: api_key
+  notes: SRTM, Copernicus DEM, ALOS... (free API key)
+  status:
+    state: fail
+    latency_ms: 645
+    checked_at: '2026-08-08'
+    detail: HTTP 400
+- id: usgs_tnm
+  name: USGS The National Map (services)
+  type: registry
+  endpoint: https://apps.nationalmap.gov/services/
+  provider: USGS
+  coverage: usa
+  themes:
+  - meta
+  - basemap
+  - elevation
+  - water
+  auth: none
+  status:
+    state: ok
+    latency_ms: 105
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: nasa_gibs_wmts
+  name: NASA GIBS WMTS
+  type: wmts
+  endpoint: https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/wmts.cgi
+  provider: NASA
+  coverage: global
+  themes:
+  - satellite
+  - imagery
+  - basemap
+  - weather
+  auth: none
+  test:
+    layer: BlueMarble_NextGeneration
+  notes: 'Daily global imagery (MODIS, VIIRS...), also epsg4326/3413/3031. Hundreds of GIBS layers — this is the
+    source behind many IntMap-style overlays: night lights / lumieres nocturnes (VIIRS Black Marble Night Lights),
+    true-colour daily satellite / imagerie couleur naturelle, cloud fraction / couverture nuageuse, cloud-top temperature,
+    water vapour / vapeur d''eau, land surface temperature day & night / temperature de surface, sea-surface temperature
+    (SST) / temperature de surface de la mer et son anomalie, chlorophyll-a ocean colour / chlorophylle, aerosol
+    optical depth & UV aerosol index / aerosols, snow & ice cover / neige et glace, sea-ice concentration / concentration
+    de glace de mer, vegetation index NDVI / indice de vegetation.'
+  status:
+    state: ok
+    latency_ms: 8978
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 256 × 512
+    layer: BlueMarble_NextGeneration
+    checked_at: '2026-08-08'
+- id: nasa_gibs_wms
+  name: NASA GIBS WMS
+  type: wms
+  endpoint: https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi
+  provider: NASA
+  coverage: global
+  themes:
+  - satellite
+  - imagery
+  - weather
+  - fire
+  auth: none
+  notes: 'GIBS WMS (GetMap on a bbox). Same catalogue as the WMTS tiles, handy when you need a georeferenced image
+    rather than tiles: VIIRS/MODIS thermal anomalies / anomalies thermiques (active-fire overlays — see also nasa_firms
+    for the point CSV), AMSRU2 sea-ice concentration / concentration de glace de mer, sea-surface temperature /
+    temperature de surface de la mer, aerosol / aerosols, and night lights / lumieres nocturnes. Pass an explicit
+    per-layer TIME= (the server default is a single stale date, so a bare request often returns a blank or out-of-range
+    image).'
+  status:
+    state: ok
+    latency_ms: 328
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: fail
+    detail: 'ServiceException: msWMSApplyTime: WMS server error. Time value(s) 2023-06-01T00:00:00Z given is invalid
+      or outside the time extent defined (2026-08-03T17:14:34Z/2026-08-03T17:14:34Z/PT59M41S,2026-08-0'
+    layer: NASA_GIBS_EPSG4326_best
+    checked_at: '2026-08-08'
+- id: noaa_nowcoast
+  name: NOAA nowCOAST
+  type: registry
+  endpoint: https://nowcoast.noaa.gov/
+  provider: NOAA
+  coverage: usa
+  themes:
+  - weather
+  - ocean
+  - hazards
+  auth: none
+  status:
+    state: ok
+    latency_ms: 231
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: nws_api
+  name: NOAA NWS API (météo & alertes)
+  type: rest
+  endpoint: https://api.weather.gov
+  provider: NOAA
+  coverage: usa
+  themes:
+  - weather
+  - hazards
+  auth: none
+  layers:
+  - id: alerts/active
+    title: Active weather alerts (area/point filters)
+  - id: stations
+    title: Observation stations
+  status:
+    state: ok
+    latency_ms: 252
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: fail
+    detail: 'HTTPError: 400 Client Error: Bad Request for url: https://api.weather.gov/alerts/active?bbox=-77.05%2C38.88%2C-76.95%2C38.95&size=200&format=json'
+    layer: alerts/active
+    checked_at: '2026-08-08'
+- id: usgs_earthquake
+  name: USGS Earthquake API
+  type: rest
+  endpoint: https://earthquake.usgs.gov/fdsnws/event/1
+  provider: USGS
+  coverage: global
+  themes:
+  - hazards
+  - geology
+  auth: none
+  test:
+    url: https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&limit=1
+    bbox: -122.0,36.0,-118.0,39.0
+  layers:
+  - id: query
+    title: Earthquake catalog (format=geojson, bbox, time, magnitude)
+  catalog:
+    bboxParams:
+      minlongitude: '{minx}'
+      minlatitude: '{miny}'
+      maxlongitude: '{maxx}'
+      maxlatitude: '{maxy}'
+    params:
+      format: geojson
+  notes: fdsnws uses min/maxlongitude & min/maxlatitude (not a bbox param) and returns GeoJSON; the REST layer now
+    parses FeatureCollection geometry. Default test bbox is central California (active).
+  status:
+    state: ok
+    latency_ms: 75
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: ok
+    detail: 320 feature(s)
+    layer: query
+    checked_at: '2026-08-08'
+    count: 320
+- id: mrlc_nlcd
+  name: MRLC NLCD (land cover USA)
+  type: wms
+  endpoint: https://www.mrlc.gov/geoserver/ows
+  provider: MRLC
+  coverage: usa
+  themes:
+  - landcover
+  auth: none
+  status:
+    state: ok
+    latency_ms: 754
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: fail
+    detail: 'ServiceException: java.io.IOException: Failed to create reader from file:///netapp/sharedwebfs1/shared/mrlc/data/MRLC-CurrentViewer-Layers/ExoticAnnualGrass_2025Apr12_PercentCover_native
+      and hints Hin'
+    layer: mrlc_download:Exotic_Annual_Grass_2025
+    checked_at: '2026-08-08'
+- id: epa_geoservices
+  name: EPA environmental services
+  type: registry
+  endpoint: https://geopub.epa.gov/arcgis/rest/services
+  provider: US EPA
+  coverage: usa
+  themes:
+  - water
+  - hazards
+  - meta
+  auth: none
+  status:
+    state: ok
+    latency_ms: 596
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: bkg_topplus
+  name: Allemagne — BKG TopPlus Open
+  type: wms
+  endpoint: https://sgx.geodatenzentrum.de/wms_topplus_open
+  provider: BKG (Allemagne)
+  coverage: germany
+  themes:
+  - basemap
+  auth: none
+  status:
+    state: ok
+    latency_ms: 362
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 87 × 106
+    layer: web
+    checked_at: '2026-08-08'
+- id: os_uk
+  name: Royaume-Uni — Ordnance Survey Maps API
+  type: wmts
+  endpoint: https://api.os.uk/maps/raster/v1/wmts
+  provider: Ordnance Survey
+  coverage: uk
+  themes:
+  - basemap
+  auth: api_key
+  status:
+    state: auth_required
+    latency_ms: 179
+    checked_at: '2026-08-08'
+    detail: HTTP 401 (credentials required)
+  fetch:
+    state: auth_required
+    detail: auth=api_key, no creds in env
+    layer: null
+    checked_at: '2026-08-08'
+- id: defra_uk
+  name: Royaume-Uni — DEFRA / Environment Agency
+  type: registry
+  endpoint: https://environment.data.gov.uk/spatialdata/
+  provider: DEFRA
+  coverage: uk
+  themes:
+  - water
+  - hazards
+  - biodiversity
+  auth: none
+  status:
+    state: fail
+    latency_ms: 332
+    checked_at: '2026-08-08'
+    detail: HTTP 404
+- id: pdok_nl
+  name: Pays-Bas — PDOK
+  type: registry
+  endpoint: https://service.pdok.nl/
+  provider: PDOK
+  coverage: netherlands
+  themes:
+  - basemap
+  - admin
+  - meta
+  auth: none
+  notes: Very rich (WMS/WFS/WMTS/OGC API per dataset)
+  status:
+    state: fail
+    latency_ms: 151
+    checked_at: '2026-08-08'
+    detail: HTTP 404
+- id: ign_es
+  name: Espagne — IGN base
+  type: wms
+  endpoint: https://www.ign.es/wms-inspire/ign-base
+  provider: IGN España
+  coverage: spain
+  themes:
+  - basemap
+  auth: none
+  status:
+    state: ok
+    latency_ms: 67
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 87 × 89
+    layer: IGNBaseTodo
+    checked_at: '2026-08-08'
+- id: swisstopo
+  name: Suisse — swisstopo geo.admin
+  type: wms
+  endpoint: https://wms.geo.admin.ch/
+  provider: swisstopo
+  coverage: switzerland
+  themes:
+  - basemap
+  - elevation
+  - admin
+  auth: none
+  status:
+    state: ok
+    latency_ms: 279
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 64 × 80
+    layer: ch.vbs.armee-kriegsdenkmaeler
+    checked_at: '2026-08-08'
+- id: vlaanderen_be
+  name: Belgique — Geopunt Vlaanderen
+  type: registry
+  endpoint: https://geo.api.vlaanderen.be/
+  provider: Vlaanderen
+  coverage: belgium
+  themes:
+  - basemap
+  - admin
+  - meta
+  auth: none
+  status:
+    state: ok
+    latency_ms: 173
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: nrcan_canvec
+  name: Canada — GéoBase CanVec
+  type: wms
+  endpoint: https://maps.geogratis.gc.ca/wms/canvec_en
+  provider: NRCan
+  coverage: canada
+  themes:
+  - basemap
+  - admin
+  auth: none
+  status:
+    state: ok
+    latency_ms: 803
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: fail
+    detail: 'RuntimeError: Failed after 4 attempts: HTTPConnectionPool(host=''maps.geogratis.gc.ca'', port=80):
+      Max retries exceeded with url: /wms/canvec_en?service=WMS&version=1.3.0&request=GetMap&layers=canvec&st'
+    layer: canvec
+    checked_at: '2026-08-08'
+- id: ga_australia
+  name: Australie — Geoscience Australia
+  type: registry
+  endpoint: https://services.ga.gov.au/
+  provider: Geoscience Australia
+  coverage: australia
+  themes:
+  - geology
+  - elevation
+  - meta
+  auth: none
+  notes: Geoscience Australia services portal (WMS/WFS per dataset)
+  status:
+    state: ok
+    latency_ms: 1162
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: geonorge_no
+  name: Norvège — Kartverket topo
+  type: wms
+  endpoint: https://wms.geonorge.no/skwms1/wms.topo
+  provider: Kartverket
+  coverage: norway
+  themes:
+  - basemap
+  auth: none
+  status:
+    state: ok
+    latency_ms: 338
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: ok
+    detail: raster 64 × 64
+    layer: topo
+    checked_at: '2026-08-08'
+- id: linz_nz
+  name: Nouvelle-Zélande — LINZ Data Service
+  type: registry
+  endpoint: https://data.linz.govt.nz/
+  provider: LINZ
+  coverage: new-zealand
+  themes:
+  - basemap
+  - admin
+  - meta
+  auth: api_key
+  notes: LINZ Data Service — WMS/WMTS/WFS with free API key
+  status:
+    state: ok
+    latency_ms: 1800
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: nasa_firms
+  name: NASA FIRMS (feux actifs)
+  type: rest
+  endpoint: https://firms.modaps.eosdis.nasa.gov/api
+  provider: NASA
+  coverage: global
+  themes:
+  - fire
+  - hazards
+  auth: api_key
+  layers:
+  - id: area/csv/{MAP_KEY}/{source}/{area}/{day_range}
+    title: Active fire detections in an area (source=VIIRS_SNPP_NRT|MODIS_NRT...)
+  notes: MODIS/VIIRS near-real-time active fires / feux actifs, i.e. thermal anomalies / anomalies thermiques (the
+    fire-hotspot layer). Free MAP_KEY required (in the URL path). Returns CSV with latitude/longitude — needs CSV
+    parsing. For a ready-made raster overlay of the same product see nasa_gibs_wms.
+  status:
+    state: ok
+    latency_ms: 931
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: auth_required
+    detail: auth=api_key, no creds in env
+    layer: null
+    checked_at: '2026-08-08'
+- id: copernicus_cds
+  name: Copernicus Climate Data Store API
+  type: rest
+  endpoint: https://cds.climate.copernicus.eu/api
+  provider: Copernicus / ECMWF
+  coverage: global
+  themes:
+  - climate
+  - weather
+  auth: api_key
+  notes: ERA5, seasonal forecasts... (cdsapi client)
+  status:
+    state: ok
+    latency_ms: 189
+    checked_at: '2026-08-08'
+    detail: HTTP 202
+  fetch:
+    state: auth_required
+    detail: auth=api_key, no creds in env
+    layer: null
+    checked_at: '2026-08-08'
+- id: ecmwf_opendata
+  name: ECMWF Open Data (prévisions)
+  type: rest
+  endpoint: https://data.ecmwf.int/forecasts/
+  provider: ECMWF
+  coverage: global
+  themes:
+  - weather
+  auth: none
+  layers:
+  - id: forecasts
+    title: Open forecast data index (GRIB)
+  status:
+    state: ok
+    latency_ms: 766
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: fail
+    detail: 'HTTPError: 404 Client Error: Not Found for url: https://data.ecmwf.int/forecasts//forecasts?bbox=1.4%2C43.55%2C1.5%2C43.65&size=200&format=json'
+    layer: forecasts
+    checked_at: '2026-08-08'
+- id: noaa_nomads
+  name: NOAA NOMADS (GFS...)
+  type: registry
+  endpoint: https://nomads.ncep.noaa.gov/
+  provider: NOAA
+  coverage: global
+  themes:
+  - weather
+  - climate
+  auth: none
+  status:
+    state: ok
+    latency_ms: 240
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: reliefweb
+  name: ReliefWeb API (humanitaire)
+  type: rest
+  endpoint: https://api.reliefweb.int/v2
+  provider: UN OCHA
+  coverage: global
+  themes:
+  - hazards
+  auth: none
+  test:
+    url: https://api.reliefweb.int/v2/reports?limit=1&appname=geodatacatalog
+  layers:
+  - id: reports
+    title: Humanitarian reports
+  - id: disasters
+    title: Disaster events
+  - id: countries
+    title: Country profiles
+  status:
+    state: fail
+    latency_ms: 364
+    checked_at: '2026-08-08'
+    detail: HTTP 403
+- id: hotosm_export
+  name: HOT Export Tool (OSM humanitaire)
+  type: registry
+  endpoint: https://export.hotosm.org/
+  provider: Humanitarian OSM Team
+  coverage: global
+  themes:
+  - hazards
+  - basemap
+  auth: none
+  status:
+    state: ok
+    latency_ms: 577
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: gbif
+  name: GBIF (occurrences d'espèces)
+  type: rest
+  endpoint: https://api.gbif.org/v1
+  provider: GBIF
+  coverage: global
+  themes:
+  - biodiversity
+  auth: none
+  test:
+    url: https://api.gbif.org/v1/occurrence/search?limit=1
+    openapi:
+    - https://techdocs.gbif.org/openapi/occurrence.json
+  layers:
+  - id: occurrence/search
+    title: Species occurrences (geometry/country filters, paginated)
+  - id: species/search
+    title: Taxon search (full text)
+  - id: species/match
+    title: Fuzzy taxon name matching
+  - id: dataset/search
+    title: Dataset search
+  catalog:
+    api_endpoint: https://api.gbif.org/v1/occurrence/search
+    queryParam: scientificName
+    dataKey: results
+    lonField: decimalLongitude
+    latField: decimalLatitude
+    bboxParams:
+      decimalLatitude: '{miny},{maxy}'
+      decimalLongitude: '{minx},{maxx}'
+    params:
+      hasCoordinate: 'true'
+      hasGeospatialIssue: 'false'
+    datetimeParam: year
+    paginate:
+      offset_param: offset
+      limit_param: limit
+      page_size: 300
+      max_records: 5000
+      end_field: endOfRecords
+  notes: Species occurrences worldwide. productType = scientific name (e.g. Gypaetus barbatus)
+  status:
+    state: ok
+    latency_ms: 195
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: free-form productType ('scientificName') — set test.layer to a real value to verify
+    layer: null
+    checked_at: '2026-08-08'
+- id: inaturalist
+  name: iNaturalist API
+  type: rest
+  endpoint: https://api.inaturalist.org/v1
+  provider: iNaturalist
+  coverage: global
+  themes:
+  - biodiversity
+  auth: none
+  test:
+    url: https://api.inaturalist.org/v1/taxa?q=quercus&per_page=1
+  layers:
+  - id: observations
+    title: Observations (nelat/nelng/swlat/swlng bbox)
+  - id: taxa
+    title: Taxon search
+  - id: places/nearby
+    title: Places near a point
+  catalog:
+    bboxParams:
+      nelat: '{maxy}'
+      nelng: '{maxx}'
+      swlat: '{miny}'
+      swlng: '{minx}'
+    dataKey: results
+    geometryField: geojson
+  notes: Observations are returned with a per-record `geojson` Point (no flat lon/lat); the bbox uses nelat/nelng/swlat/swlng.
+    taxa/places are queried differently (q=/lat,lng).
+  status:
+    state: ok
+    latency_ms: 747
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: ok
+    detail: 30 feature(s)
+    layer: observations
+    checked_at: '2026-08-08'
+    count: 30
+- id: protected_planet
+  name: Protected Planet (WDPA)
+  type: registry
+  endpoint: https://www.protectedplanet.net/
+  provider: UNEP-WCMC
+  coverage: global
+  themes:
+  - biodiversity
+  auth: api_key
+  notes: World Database on Protected Areas
+  status:
+    state: ok
+    latency_ms: 2465
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: map_of_life
+  name: Map of Life API
+  type: rest
+  endpoint: https://mol.org/api
+  provider: Map of Life
+  coverage: global
+  themes:
+  - biodiversity
+  auth: none
+  layers:
+  - id: species
+    title: Species lookup
+  status:
+    state: ok
+    latency_ms: 755
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: fail
+    detail: 'JSONDecodeError: Expecting value: line 1 column 1 (char 0)'
+    layer: species
+    checked_at: '2026-08-08'
+- id: onegeology
+  name: OneGeology (portail mondial)
+  type: registry
+  endpoint: https://portal.onegeology.org/
+  provider: OneGeology
+  coverage: global
+  themes:
+  - geology
+  - meta
+  auth: none
+  status:
+    state: ok
+    latency_ms: 251
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: macrostrat
+  name: Macrostrat API
+  type: rest
+  endpoint: https://macrostrat.org/api
+  provider: UW-Madison
+  coverage: global
+  themes:
+  - geology
+  auth: none
+  test:
+    url: https://macrostrat.org/api/defs/timescales?all
+  layers:
+  - id: geologic_units/map
+    title: Geologic map units at a point (lat/lng)
+  - id: columns
+    title: Stratigraphic columns
+  - id: defs/lithologies
+    title: Lithology definitions
+  status:
+    state: ok
+    latency_ms: 421
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: fail
+    detail: 'HTTPError: 500 Server Error: Internal Server Error for url: https://macrostrat.org/api/geologic_units/map?bbox=1.4%2C43.55%2C1.5%2C43.65&size=200&format=json'
+    layer: geologic_units/map
+    checked_at: '2026-08-08'
+- id: usgs_sgmc
+  name: USGS State Geologic Map (SGMC)
+  type: wms
+  endpoint: https://mrdata.usgs.gov/services/sgmc
+  provider: USGS
+  coverage: usa
+  themes:
+  - geology
+  auth: none
+  status:
+    state: ok
+    latency_ms: 725
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: fail
+    detail: 'HTTPError: 404 Client Error: Not Found for url: https://mrdata.usgs.gov/mapcache/?service=WMS&version=1.1.1&request=GetMap&layers=mrds-AL&styles=&width=113&height=102&srs=EPSG%3A4326&bbox=-77.05%2C38.'
+    layer: mrds-AL
+    checked_at: '2026-08-08'
+- id: bgs_uk
+  name: British Geological Survey
+  type: registry
+  endpoint: https://map.bgs.ac.uk/arcgis/services/
+  provider: BGS
+  coverage: uk
+  themes:
+  - geology
+  auth: none
+  test:
+    url: https://map.bgs.ac.uk/arcgis/rest/services?f=json
+  status:
+    state: ok
+    latency_ms: 227
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: natural_earth_rivers
+  name: Natural Earth — Rivers & Lake Centerlines
+  type: rest
+  endpoint: https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson
+  provider: Natural Earth
+  coverage: global
+  themes:
+  - water
+  - basemap
+  auth: none
+  test:
+    url: https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_rivers_lake_centerlines.geojson
+  layers:
+  - id: ne_10m_rivers_lake_centerlines.geojson
+    title: Rivers & lake centerlines — 10m, detailed (named, incl. major fleuves like the Nile)
+  - id: ne_50m_rivers_lake_centerlines.geojson
+    title: Rivers & lake centerlines — 50m, generalised (lighter)
+  - id: ne_110m_rivers_lake_centerlines.geojson
+    title: Rivers & lake centerlines — 110m, very generalised (world overview)
+  - id: ne_10m_rivers_europe.geojson
+    title: Rivers — Europe supplement (10m, denser network)
+  - id: ne_10m_rivers_north_america.geojson
+    title: Rivers — North America supplement (10m, denser network)
+  notes: Global river/fleuve POLYLINES (one named line per major river — the Nile, Amazon…), plus lake centerlines.
+    Static GeoJSON (the whole file is fetched, then clipped to the AOI client-side), EPSG:4326. Use 10m for detail/names,
+    50m or 110m for a light world overview. No server-side bbox filter.
+  status:
+    state: ok
+    latency_ms: 306
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: ok
+    detail: 1455 feature(s)
+    layer: ne_10m_rivers_lake_centerlines.geojson
+    checked_at: '2026-08-08'
+    count: 1455
+- id: overpass
+  name: OSM Overpass API
+  type: rest
+  endpoint: https://overpass-api.de/api/interpreter
+  provider: OpenStreetMap
+  coverage: global
+  themes:
+  - basemap
+  - infrastructure
+  - admin
+  auth: none
+  test:
+    url: https://overpass-api.de/api/status
+  layers:
+  - id: waterway=river
+    title: Rivers (OSM waterway=river) — lines, e.g. the Nile
+  - id: waterway
+    title: Watercourses — all (river, stream, canal, drain…)
+  - id: waterway=stream
+    title: Streams (OSM waterway=stream)
+  - id: waterway=canal
+    title: Canals (OSM waterway=canal)
+  - id: natural=water
+    title: Water bodies — lakes/ponds (OSM natural=water)
+  - id: natural=wetland
+    title: Wetlands (OSM natural=wetland)
+  - id: natural=coastline
+    title: Coastline (OSM natural=coastline)
+  - id: natural=glacier
+    title: Glaciers (OSM natural=glacier)
+  - id: man_made=pier
+    title: Piers (OSM man_made=pier)
+  - id: highway
+    title: Roads & paths — all (OSM highway=*)
+  - id: highway=motorway,highway=trunk,highway=primary
+    title: Major roads (motorway/trunk/primary)
+  - id: railway=rail
+    title: Railways (OSM railway=rail)
+  - id: railway=station,railway=halt
+    title: Train stations (OSM railway=station/halt)
+  - id: aeroway=aerodrome
+    title: Airports (OSM aeroway=aerodrome)
+  - id: aeroway=runway
+    title: Runways (OSM aeroway=runway)
+  - id: public_transport=stop_position
+    title: Public-transport stops
+  - id: amenity=parking
+    title: Parking (OSM amenity=parking)
+  - id: amenity=fuel
+    title: Fuel stations (OSM amenity=fuel)
+  - id: amenity=charging_station
+    title: EV charging stations
+  - id: bridge=yes
+    title: Bridges (OSM bridge=yes)
+  - id: building
+    title: Buildings — all (OSM building=*)
+  - id: place=city,place=town,place=village
+    title: Populated places (city/town/village)
+  - id: boundary=administrative
+    title: Administrative boundaries (OSM boundary=administrative)
+  - id: boundary=protected_area
+    title: Protected areas (OSM boundary=protected_area)
+  - id: amenity=restaurant,amenity=cafe,amenity=fast_food
+    title: Food & drink (restaurant/cafe/fast_food)
+  - id: amenity=school,amenity=kindergarten
+    title: Schools (OSM amenity=school)
+  - id: amenity=university,amenity=college
+    title: Universities & colleges
+  - id: amenity=hospital,amenity=clinic
+    title: Hospitals & clinics
+  - id: amenity=pharmacy
+    title: Pharmacies (OSM amenity=pharmacy)
+  - id: amenity=police
+    title: Police stations (OSM amenity=police)
+  - id: amenity=place_of_worship
+    title: Places of worship
+  - id: shop
+    title: Shops — all (OSM shop=*)
+  - id: shop=supermarket
+    title: Supermarkets (OSM shop=supermarket)
+  - id: tourism=hotel,tourism=hostel,tourism=guest_house
+    title: Accommodation (hotel/hostel/guest_house)
+  - id: tourism=attraction,tourism=museum,tourism=viewpoint
+    title: Tourist attractions
+  - id: leisure=park
+    title: Parks (OSM leisure=park)
+  - id: leisure=pitch,leisure=sports_centre,leisure=stadium
+    title: Sports facilities
+  - id: historic
+    title: Historic sites (OSM historic=*)
+  - id: landuse=forest,natural=wood
+    title: Forest & woodland
+  - id: landuse=farmland
+    title: Farmland (OSM landuse=farmland)
+  - id: landuse=residential
+    title: Residential areas
+  - id: landuse=industrial
+    title: Industrial areas
+  - id: landuse=vineyard,landuse=orchard
+    title: Vineyards & orchards
+  - id: natural=peak
+    title: Mountain peaks (OSM natural=peak)
+  - id: natural=beach
+    title: Beaches (OSM natural=beach)
+  - id: natural=tree
+    title: Trees (OSM natural=tree)
+  - id: power=line
+    title: Power lines (OSM power=line)
+  - id: power=tower
+    title: Power towers (OSM power=tower)
+  - id: power=generator,power=plant
+    title: Power generation
+  - id: man_made=tower
+    title: Towers (OSM man_made=tower)
+  - id: man_made=pipeline
+    title: Pipelines (OSM man_made=pipeline)
+  - id: amenity=drinking_water
+    title: Drinking-water points
+  catalog:
+    plugin: overpass.py
+  notes: 'OSM vector features via Overpass QL (POST) → points/lines/polygons. The curated list is a STARTER set
+    — productType is ANY OSM tag filter: a key (highway), a key=value (amenity=restaurant), or several separated
+    by , / | (any-of, e.g. amenity=school,amenity=university). A tag filter alone matches EVERY feature with that
+    tag in the AOI — append ;name=<text> to match a SINGLE named feature instead (e.g. waterway=river;name=Nile).
+    Query per AOI/region (a planet-wide request times out). See the OSM wiki Map Features for every available key/value.'
+  status:
+    state: ok
+    latency_ms: 215
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: ok
+    detail: 49 feature(s)
+    layer: waterway=river
+    checked_at: '2026-08-08'
+    count: 49
+- id: nominatim
+  name: OSM Nominatim (géocodage)
+  type: rest
+  endpoint: https://nominatim.openstreetmap.org
+  provider: OpenStreetMap
+  coverage: global
+  themes:
+  - admin
+  - basemap
+  auth: none
+  test:
+    url: https://nominatim.openstreetmap.org/search?q=Toulouse&format=json&limit=1
+  layers:
+  - id: search
+    title: Geocoding (q=, format=json)
+  - id: reverse
+    title: Reverse geocoding (lat/lon)
+  status:
+    state: ok
+    latency_ms: 224
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: fail
+    detail: 'HTTPError: 403 Client Error: Forbidden for url: https://nominatim.openstreetmap.org/search?bbox=1.4%2C43.55%2C1.5%2C43.65&size=200&format=json'
+    layer: search
+    checked_at: '2026-08-08'
+- id: osm_tiles
+  name: OSM standard tiles
+  type: xyz
+  endpoint: https://tile.openstreetmap.org/{z}/{x}/{y}.png
+  provider: OpenStreetMap
+  coverage: global
+  themes:
+  - basemap
+  auth: none
+  status:
+    state: ok
+    latency_ms: 75
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'xyz: raster tile template, no queryable layer; see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: carto_basemaps
+  name: CARTO basemaps (dark / light / voyager)
+  type: xyz
+  endpoint: https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png
+  provider: CARTO
+  coverage: global
+  themes:
+  - basemap
+  auth: none
+  test:
+    url: https://a.basemaps.cartocdn.com/dark_all/6/32/22.png
+  notes: 'Free global raster basemaps (© CARTO © OpenStreetMap). The endpoint is the dark night basemap — a fond
+    de carte sombre pour la nuit. Swap the style path for its siblings: light_all (positron clair), dark_all (dark
+    nuit sombre), voyager, dark_nolabels, light_nolabels. XYZ raster tiles, so add them with add_xyz_tile_layer
+    (they are NOT MapLibre style JSONs — do not pass them to change_basemap).'
+  status:
+    state: ok
+    latency_ms: 83
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'xyz: raster tile template, no queryable layer; see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: openaerialmap
+  name: OpenAerialMap
+  type: rest
+  endpoint: https://api.openaerialmap.org
+  provider: OpenAerialMap
+  coverage: global
+  themes:
+  - imagery
+  auth: none
+  test:
+    url: https://api.openaerialmap.org/meta?limit=1
+  layers:
+  - id: meta
+    title: Imagery metadata search (bbox)
+  status:
+    state: ok
+    latency_ms: 465
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: empty
+    detail: 0 feature(s)
+    layer: meta
+    checked_at: '2026-08-08'
+    count: 0
+- id: overture_maps
+  name: Overture Maps (vector tiles)
+  type: rest
+  endpoint: https://overturemaps.org/
+  provider: Overture Maps Foundation
+  coverage: global
+  themes:
+  - basemap
+  - infrastructure
+  - admin
+  auth: none
+  layers:
+  - id: places
+    title: Places / POIs (name, category)
+  - id: buildings
+    title: Building footprints (height, class)
+  - id: transportation
+    title: Roads & paths (segments)
+  - id: divisions
+    title: Administrative divisions (areas)
+  catalog:
+    plugin: overture_tiles.py
+  notes: 'Global harmonised features (OSM + Meta + Microsoft + Esri + Foursquare). DEFAULT plugin `overture_tiles.py`
+    reads the official Overture PMTiles (range-read of the few covering tiles) → FAST on a live bbox, at the cost
+    of tile generalisation/clipping and a reduced attribute set (needs pmtiles + mapbox-vector-tile + mercantile).
+    For EXACT geometry / all columns / bulk extraction over large areas, switch the provider to `plugin: overture.py`
+    (GeoParquet over S3 via DuckDB — slower on a live bbox, transportation/buildings span hundreds of files). `pip
+    install geodatacatalog[overture]`.'
+  status:
+    state: ok
+    latency_ms: 237
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: ok
+    detail: 18193 feature(s)
+    layer: places
+    checked_at: '2026-08-08'
+    count: 18193
+- id: natural_earth
+  name: Natural Earth (vecteurs monde)
+  type: registry
+  endpoint: https://www.naturalearthdata.com/downloads/
+  provider: Natural Earth
+  coverage: global
+  themes:
+  - basemap
+  - admin
+  auth: none
+  status:
+    state: ok
+    latency_ms: 626
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: stac_index
+  name: STAC Index (registre des API STAC)
+  type: registry
+  endpoint: https://stacindex.org/api/catalogs
+  provider: STAC community
+  coverage: global
+  themes:
+  - meta
+  auth: none
+  notes: JSON list of all public STAC catalogs — ideal starting point
+  status:
+    state: ok
+    latency_ms: 283
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: geoseer
+  name: GeoSeer (moteur de recherche OGC)
+  type: registry
+  endpoint: https://www.geoseer.net/
+  provider: GeoSeer
+  coverage: global
+  themes:
+  - meta
+  auth: none
+  notes: Search engine over millions of WMS/WFS/WCS/WMTS layers
+  status:
+    state: ok
+    latency_ms: 146
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: inspire_geoportal
+  name: INSPIRE Geoportal (catalogue UE)
+  type: csw
+  endpoint: https://inspire-geoportal.ec.europa.eu/srv/eng/csw
+  provider: European Commission / INSPIRE
+  coverage: europe
+  themes:
+  - meta
+  auth: none
+  notes: 'Pan-European INSPIRE metadata catalogue (~380k records: datasets + services across all EU)'
+  status:
+    state: fail
+    latency_ms: 198
+    checked_at: '2026-08-08'
+    detail: 200 but no capabilities document
+  fetch:
+    state: skipped
+    detail: 'csw: metadata catalogue — use `discover`, not fetch; see Status for reachability'
+    layer: null
+    checked_at: '2026-06-29'
+- id: datagov_us
+  name: data.gov catalogue (CKAN)
+  type: rest
+  endpoint: https://catalog.data.gov/api/3/action/package_search
+  provider: US GSA
+  coverage: usa
+  themes:
+  - meta
+  auth: none
+  test:
+    url: https://catalog.data.gov/api/3/action/package_search?rows=1
+  layers:
+  - id: action/package_search
+    title: CKAN dataset search
+  status:
+    state: fail
+    latency_ms: 286
+    checked_at: '2026-08-08'
+    detail: HTTP 404
+- id: eea_sdi
+  name: EEA SDI catalogue (CSW)
+  type: csw
+  endpoint: https://sdi.eea.europa.eu/catalogue/srv/eng/csw
+  provider: European Environment Agency
+  coverage: europe
+  themes:
+  - meta
+  - landcover
+  - biodiversity
+  - water
+  - climate
+  auth: none
+  notes: Searchable EU environmental metadata catalogue (datasets + services)
+  status:
+    state: ok
+    latency_ms: 268
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: skipped
+    detail: 'csw: metadata catalogue — use `discover`, not fetch; see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: sextant
+  name: Ifremer Sextant (CSW)
+  type: csw
+  endpoint: https://sextant.ifremer.fr/geonetwork/srv/fre/csw
+  provider: Ifremer
+  coverage: europe
+  themes:
+  - meta
+  - ocean
+  - biodiversity
+  auth: none
+  notes: Marine and coastal metadata catalogue (Ifremer Sextant)
+  status:
+    state: ok
+    latency_ms: 267
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: skipped
+    detail: 'csw: metadata catalogue — use `discover`, not fetch; see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: geoplateforme_csw
+  name: IGN Géoplateforme catalogue (CSW)
+  type: csw
+  endpoint: https://data.geopf.fr/csw
+  provider: IGN (Géoplateforme)
+  coverage: france
+  themes:
+  - meta
+  - basemap
+  - admin
+  auth: none
+  notes: Metadata catalogue of the French Géoplateforme (IGN national platform)
+  status:
+    state: ok
+    latency_ms: 69
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: skipped
+    detail: 'csw: metadata catalogue — use `discover`, not fetch; see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: maxar_open_data
+  name: Maxar Open Data (imagerie catastrophes)
+  type: registry
+  endpoint: https://maxar-opendata.s3.amazonaws.com/events/catalog.json
+  provider: Maxar
+  coverage: global
+  themes:
+  - imagery
+  - satellite
+  - hazards
+  auth: none
+  notes: High-resolution imagery for disaster events (CC-BY-NC), as a STATIC STAC catalog. Browse with pystac; not
+    a STAC API (no /search endpoint), so list it, do not drill it.
+  status:
+    state: ok
+    latency_ms: 635
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: movebank
+  name: Movebank (suivi GPS d'animaux)
+  type: rest
+  endpoint: https://www.movebank.org/movebank/service
+  provider: Max Planck Institute of Animal Behavior
+  coverage: global
+  themes:
+  - biodiversity
+  auth: none
+  test:
+    url: https://www.movebank.org/movebank/service/public/json?entity_type=study
+  layers:
+  - id: public/json
+    title: Public study locations (one point per study)
+  - id: '2911040'
+    title: GPS fixes for a study (numeric study id → points per individual)
+  catalog:
+    plugin: movebank.py
+  notes: Animal tracking via the movebank.py plugin. productType = a numeric study id → GPS fixes (points per individual);
+    a non-numeric value → the public study list (one point per study). Most studies need a free Movebank login (auth.credentials)
+    + licence acceptance; the public API is rate-limited.
+  status:
+    state: fail
+    latency_ms: 20154
+    checked_at: '2026-08-08'
+    detail: timeout after 20s
+- id: opensky
+  name: OpenSky Network (trafic aérien ADS-B)
+  type: rest
+  endpoint: https://opensky-network.org/api
+  provider: OpenSky Network
+  coverage: global
+  themes:
+  - transport
+  - infrastructure
+  auth: none
+  test:
+    url: https://opensky-network.org/api/states/all?lamin=45&lomin=5&lamax=47&lomax=8
+    bbox: 5.0,45.0,8.0,47.0
+  layers:
+  - id: states/all
+    title: Live aircraft state vectors (lamin/lomin/lamax/lomax bbox)
+  - id: flights/all
+    title: Flights in a time window (begin/end epoch seconds)
+  catalog:
+    plugin: opensky.py
+  notes: Live aircraft positions. Responses are positional ARRAYS (state vectors), so the shipped opensky.py plugin
+    maps them to points (states/all). Anonymous access is rate-limited; a free OpenSky account (auth.credentials
+    username/password) raises the limits.
+  status:
+    state: ok
+    latency_ms: 119
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: ok
+    detail: 73 feature(s)
+    layer: states/all
+    checked_at: '2026-08-08'
+    count: 73
+- id: digitraffic_marine
+  name: Digitraffic Marine (trafic maritime AIS)
+  type: rest
+  endpoint: https://meri.digitraffic.fi/api
+  provider: Fintraffic
+  coverage: finland
+  themes:
+  - transport
+  - ocean
+  - infrastructure
+  auth: none
+  test:
+    url: https://meri.digitraffic.fi/api/ais/v1/locations
+  layers:
+  - id: ais/v1/locations
+    title: Live vessel positions (GeoJSON)
+  - id: ais/v1/vessels
+    title: Vessel metadata (by MMSI)
+  notes: Open AIS vessel traffic in Finnish waters only (Fintraffic) — not Europe-wide. Returns a GeoJSON FeatureCollection
+    (geometry, not flat lon/lat), so it needs GeoJSON parsing. The server requires an Accept-Encoding gzip header.
+  status:
+    state: ok
+    latency_ms: 182
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: fail
+    detail: 'HTTPError: 400 Client Error: Bad Request for url: https://meri.digitraffic.fi/api/ais/v1/locations?bbox=24.9%2C60.13%2C25.0%2C60.18&size=200&format=json'
+    layer: ais/v1/locations
+    checked_at: '2026-08-08'
+- id: global_fishing_watch
+  name: Global Fishing Watch API (trafic & pêche AIS)
+  type: rest
+  endpoint: https://gateway.api.globalfishingwatch.org/v3
+  provider: Global Fishing Watch
+  coverage: global
+  themes:
+  - transport
+  - ocean
+  - biodiversity
+  auth: api_key
+  test:
+    url: https://gateway.api.globalfishingwatch.org/v3/datasets
+  layers:
+  - id: 4wings/report
+    title: Gridded AIS activity (apparent fishing effort / vessel presence) by area & time
+  - id: vessels/search
+    title: Vessel identity search (AIS)
+  - id: events
+    title: Encounters, loitering, port visits, fishing events
+  notes: Global AIS-based vessel tracking and apparent fishing effort. Free API token required (Bearer header; register
+    at globalfishingwatch.org). 4wings/report returns gridded activity and events return point/track features —
+    needs a plugin for clean geo parsing.
+  status:
+    state: auth_required
+    latency_ms: 244
+    checked_at: '2026-08-08'
+    detail: HTTP 401 (credentials required)
+  fetch:
+    state: auth_required
+    detail: auth=api_key, no creds in env
+    layer: null
+    checked_at: '2026-08-08'
+- id: marine_cadastre
+  name: MarineCadastre AIS (USA)
+  type: registry
+  endpoint: https://marinecadastre.gov/ais/
+  provider: NOAA / BOEM
+  coverage: usa
+  themes:
+  - transport
+  - ocean
+  - infrastructure
+  auth: none
+  notes: 'US AIS vessel-traffic archive (NOAA/BOEM): yearly/daily AIS point tracks and vessel-transit-count rasters
+    for US waters. Bulk download (CSV/GeoTIFF), not a live API.'
+  status:
+    state: ok
+    latency_ms: 1000
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: gdelt
+  name: GDELT 2.0 (événements & actualités géolocalisés)
+  type: rest
+  endpoint: https://api.gdeltproject.org/api/v2
+  provider: GDELT Project
+  coverage: global
+  themes:
+  - hazards
+  - meta
+  auth: none
+  test:
+    url: https://api.gdeltproject.org/api/v2/doc/doc?query=flood&format=json&maxrecords=1
+  layers:
+  - id: doc/doc
+    title: Global news article search (query, format=json, timespan)
+  notes: World news and events, updated every 15 min; rate-limited to about one request per 5 s. The companion geo/geo
+    endpoint returns GeoJSON of place mentions.
+  status:
+    state: ok
+    latency_ms: 14403
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: fail
+    detail: 'HTTPError: 429 Client Error: Too Many Requests for url: https://api.gdeltproject.org/api/v2/doc/doc?bbox=1.4%2C43.55%2C1.5%2C43.65&size=200&format=json'
+    layer: doc/doc
+    checked_at: '2026-08-08'
+- id: gfw_data_api
+  name: Global Forest Watch Data API
+  type: rest
+  endpoint: https://data-api.globalforestwatch.org
+  provider: WRI / Global Forest Watch
+  coverage: global
+  themes:
+  - forest
+  - landcover
+  - biodiversity
+  auth: none
+  test:
+    url: https://data-api.globalforestwatch.org/datasets
+  layers:
+  - id: datasets
+    title: List datasets (tree cover loss, GLAD/RADD alerts, primary forest...)
+  - id: dataset/{dataset}/{version}/query
+    title: Query a dataset by SQL/geometry (POST)
+  notes: 'Deforestation and forest change: tree cover loss, GLAD and RADD alerts, primary forest, key biodiversity
+    areas. The dataset list is open; queries/downloads of some datasets need a free API key.'
+  status:
+    state: ok
+    latency_ms: 791
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: empty
+    detail: 0 feature(s)
+    layer: datasets
+    checked_at: '2026-08-08'
+    count: 0
+- id: worldbank
+  name: World Bank Open Data
+  type: rest
+  endpoint: https://api.worldbank.org/v2
+  provider: World Bank
+  coverage: global
+  themes:
+  - economy
+  - population
+  auth: none
+  test:
+    url: https://api.worldbank.org/v2/country?format=json&per_page=1
+  layers:
+  - id: country/all/indicator/{indicator}
+    title: Indicator values by country (e.g. SP.POP.TOTL, NY.GDP.MKTP.CD)
+  - id: country
+    title: Country list and metadata
+  notes: 'Socio-economic and demographic indicators by country and year — this is the source behind IntMap''s choropleth
+    indicators: GDP per capita / PIB par habitant, GDP growth, human development index (HDI) / IDH, life expectancy
+    / esperance de vie, infant & under-5 mortality / mortalite infantile, fertility rate, unemployment / chomage,
+    internet penetration / acces internet, urban population, electricity & safe-water access, CO2 per capita / emissions
+    de CO2, inflation (CPI), Gini inequality, poverty / pauvrete, literacy / alphabetisation, and more (indicator
+    codes like SP.POP.TOTL, NY.GDP.PCAP.CD). Tabular by ISO country code (no geometry) — join to admin boundaries
+    (e.g. eurostat_gisco).'
+  status:
+    state: ok
+    latency_ms: 128
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: empty
+    detail: 0 feature(s)
+    layer: country/all/indicator/{indicator}
+    checked_at: '2026-08-08'
+    count: 0
+- id: worldpop
+  name: WorldPop (densité de population)
+  type: rest
+  endpoint: https://api.worldpop.org/v1
+  provider: WorldPop / University of Southampton
+  coverage: global
+  themes:
+  - population
+  auth: none
+  test:
+    url: https://api.worldpop.org/v1/services
+  layers:
+  - id: wpgppop
+    title: Total population for the bbox (Global Project pop, year from datetime)
+  catalog:
+    plugin: worldpop.py
+  notes: 'Gridded population via the worldpop.py plugin: submits the bbox to the async stats API and returns one
+    feature (bbox polygon + total_population). productType = dataset (default wpgppop). Rasters also download from
+    hub.worldpop.org.'
+  status:
+    state: ok
+    latency_ms: 1331
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: fail
+    detail: 'JSONDecodeError: Extra data: line 10 column 2 (char 254)'
+    layer: wpgppop
+    checked_at: '2026-08-08'
+- id: usgs_epqs
+  name: USGS Elevation Point Query (EPQS)
+  type: rest
+  endpoint: https://epqs.nationalmap.gov/v1
+  provider: USGS
+  coverage: usa
+  themes:
+  - elevation
+  auth: none
+  test:
+    url: https://epqs.nationalmap.gov/v1/json?x=-100&y=40&units=Meters&wkid=4326
+  layers:
+  - id: json
+    title: Elevation at a point (x=lon, y=lat, units, wkid)
+  catalog:
+    pointQuery: true
+    bboxParams:
+      x: '{cx}'
+      y: '{cy}'
+    params:
+      units: Meters
+      wkid: 4326
+  notes: 'Point query: samples the bbox centre, returns one feature with the 3DEP elevation `value` (US and territories).
+    For DEM rasters use the 3DEP ImageServer or opentopography.'
+  status:
+    state: ok
+    latency_ms: 1367
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: ok
+    detail: 1 feature(s)
+    layer: json
+    checked_at: '2026-08-08'
+    count: 1
+- id: eia
+  name: EIA (énergie & réseau électrique USA)
+  type: rest
+  endpoint: https://api.eia.gov/v2
+  provider: US Energy Information Administration
+  coverage: usa
+  themes:
+  - infrastructure
+  auth: api_key
+  test:
+    url: https://api.eia.gov/v2/
+  layers:
+  - id: electricity/facility-fuel
+    title: Power-plant generation by facility and fuel
+  - id: electricity/rto/region-data
+    title: Grid/RTO operations (demand, generation)
+  notes: 'US energy data: power plants, generation, grid operations, prices. Free API key required (api_key query
+    param). Tabular; geolocate facilities by plant id.'
+  status:
+    state: auth_required
+    latency_ms: 797
+    checked_at: '2026-08-08'
+    detail: HTTP 403 (credentials required)
+  fetch:
+    state: auth_required
+    detail: auth=api_key, no creds in env
+    layer: null
+    checked_at: '2026-08-08'
+- id: census_acs
+  name: US Census Bureau API (ACS)
+  type: rest
+  endpoint: https://api.census.gov/data
+  provider: US Census Bureau
+  coverage: usa
+  themes:
+  - population
+  - economy
+  auth: api_key
+  test:
+    url: https://api.census.gov/data/2022/acs/acs5?get=NAME&for=state:06
+  layers:
+  - id: 2022/acs/acs5
+    title: ACS 5-year estimates (get=variables, for=geography)
+  - id: 2020/dec/pl
+    title: Decennial census redistricting data
+  notes: US demographics and socio-economics by census geography (state/county/tract/block group). Free API key
+    for sustained use (key= param). Returns rows keyed by FIPS — join to TIGER boundaries.
+  status:
+    state: ok
+    latency_ms: 635
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: auth_required
+    detail: auth=api_key, no creds in env
+    layer: null
+    checked_at: '2026-08-08'
+- id: openrouteservice
+  name: OpenRouteService (routage & isochrones)
+  type: rest
+  endpoint: https://api.openrouteservice.org
+  provider: HeiGIT / openrouteservice
+  coverage: global
+  themes:
+  - infrastructure
+  - admin
+  auth: api_key
+  test:
+    url: https://api.openrouteservice.org/
+  layers:
+  - id: v2/isochrones/{profile}
+    title: Isochrones (reachability polygons) — POST locations, range
+  - id: v2/directions/{profile}
+    title: Routing between points
+  - id: v2/matrix/{profile}
+    title: Distance/time matrix
+  notes: Routing, isochrones and matrices over OSM. Free API key required (Authorization header). profile = driving-car|foot-walking|cycling-regular...
+  status:
+    state: ok
+    latency_ms: 184
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: auth_required
+    detail: auth=api_key, no creds in env
+    layer: null
+    checked_at: '2026-08-08'
+- id: submarine_cables
+  name: TeleGeography Submarine Cable Map
+  type: rest
+  endpoint: https://www.submarinecablemap.com/api/v3
+  provider: TeleGeography
+  coverage: global
+  themes:
+  - infrastructure
+  - ocean
+  auth: none
+  test:
+    url: https://www.submarinecablemap.com/api/v3/cable/cable-geo.json
+  layers:
+  - id: cable/cable-geo.json
+    title: Submarine telecom cables (GeoJSON MultiLineString)
+  - id: landing-point/landing-point-geo.json
+    title: Cable landing points (GeoJSON Point)
+  notes: Open GeoJSON, whole world in one file — the static endpoint ignores bbox/params, so it returns all features
+    (clip client-side). Cables are lines, landing points are points.
+  status:
+    state: ok
+    latency_ms: 483
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: ok
+    detail: 718 feature(s)
+    layer: cable/cable-geo.json
+    checked_at: '2026-08-08'
+    count: 718
+- id: global_power_plant
+  name: WRI Global Power Plant Database
+  type: registry
+  endpoint: https://datasets.wri.org/dataset/globalpowerplantdatabase
+  provider: World Resources Institute
+  coverage: global
+  themes:
+  - infrastructure
+  auth: none
+  notes: About 35 000 power plants worldwide with capacity, fuel and lon/lat. Downloadable CSV (point data) — load
+    directly; not a live API.
+  status:
+    state: ok
+    latency_ms: 920
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: kontur_population
+  name: Kontur Population (grille H3)
+  type: registry
+  endpoint: https://www.kontur.io/portfolio/population-dataset/
+  provider: Kontur
+  coverage: global
+  themes:
+  - population
+  auth: none
+  notes: Global population on a 400 m H3 hex grid (GeoPackage/GeoParquet download, CC-BY). Not a live API — download
+    per country or worldwide.
+  status:
+    state: ok
+    latency_ms: 1584
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: usace_nid
+  name: USACE National Inventory of Dams (NID)
+  type: registry
+  endpoint: https://nid.sec.usace.army.mil/
+  provider: US Army Corps of Engineers
+  coverage: usa
+  themes:
+  - hazards
+  - infrastructure
+  - water
+  auth: none
+  notes: Inventory of US dams (location, hazard class, height, purpose). Bulk download (CSV/GeoJSON) from the portal;
+    the JSON API has no documented open list route.
+  status:
+    state: ok
+    latency_ms: 747
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: fema_openfema
+  name: FEMA OpenFEMA (catastrophes USA)
+  type: rest
+  endpoint: https://www.fema.gov/api/open
+  provider: US FEMA
+  coverage: usa
+  themes:
+  - hazards
+  auth: none
+  test:
+    url: https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries?$top=1
+  layers:
+  - id: v2/DisasterDeclarationsSummaries
+    title: Disaster declarations by state/county (FIPS)
+  - id: v1/HmaMitigatedProperties
+    title: Hazard-mitigation properties (with lat/long)
+  notes: US disaster and hazard data (declarations, NFIP claims, mitigation). Mostly tabular by FIPS; flood-zone
+    POLYGONS are the separate NFHL ArcGIS/WMS service at hazards.fema.gov. Uses $-prefixed OData params.
+  status:
+    state: ok
+    latency_ms: 303
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: empty
+    detail: 0 feature(s)
+    layer: v2/DisasterDeclarationsSummaries
+    checked_at: '2026-08-08'
+    count: 0
+- id: open_meteo
+  name: Open-Meteo (prévisions & archives météo)
+  type: rest
+  endpoint: https://api.open-meteo.com/v1
+  provider: Open-Meteo
+  coverage: global
+  themes:
+  - weather
+  - climate
+  auth: none
+  test:
+    url: https://api.open-meteo.com/v1/forecast?latitude=43.6&longitude=3.9&daily=temperature_2m_max&forecast_days=1
+  layers:
+  - id: forecast
+    title: Point forecast (latitude/longitude, hourly/daily variables, 16 days)
+  notes: 'Free weather API, no key: forecasts (16 days) and, on archive-api.open-meteo.com/v1/archive, historical
+    reanalysis since 1940. Point-based (latitude/longitude params), returns JSON time-series arrays — no bbox and
+    not per-record lon/lat, so registered for discovery; fetch it client-side or via a plugin.'
+  status:
+    state: ok
+    latency_ms: 153
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: fail
+    detail: 'JSONDecodeError: Expecting value: line 1 column 1 (char 0)'
+    layer: forecast
+    checked_at: '2026-08-08'
+- id: eurostat_gisco
+  name: Eurostat GISCO (NUTS, LAU, pays)
+  type: rest
+  endpoint: https://gisco-services.ec.europa.eu/distribution/v2
+  provider: Eurostat
+  coverage: europe
+  themes:
+  - admin
+  - population
+  auth: none
+  test:
+    url: https://gisco-services.ec.europa.eu/distribution/v2/nuts/nuts-2021-files.json
+  layers:
+  - id: nuts/geojson/NUTS_RG_20M_2021_4326.geojson
+    title: NUTS regions 2021, 1:20M, WGS84 (also 01M/03M/10M/60M, levels 0-3)
+  - id: lau/geojson/LAU_RG_01M_2021_4326.geojson
+    title: Local administrative units (communes) 2021
+  - id: countries/geojson/CNTR_RG_20M_2024_4326.geojson
+    title: Country boundaries 2024
+  notes: EU statistical boundaries as static GeoJSON files (whole-Europe download per file, no bbox filter); statistics
+    themselves are on the separate Eurostat dissemination API (ec.europa.eu/eurostat/api/dissemination).
+  status:
+    state: ok
+    latency_ms: 178
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: ok
+    detail: 2010 feature(s)
+    layer: nuts/geojson/NUTS_RG_20M_2021_4326.geojson
+    checked_at: '2026-08-08'
+    count: 2010
+- id: esa_worldcover
+  name: ESA WorldCover (couverture terrestre 10 m)
+  type: wms
+  endpoint: https://services.terrascope.be/wms/v2
+  provider: ESA / VITO Terrascope
+  coverage: global
+  themes:
+  - landcover
+  - satellite
+  auth: none
+  test:
+    layer: WORLDCOVER_2021_MAP
+  notes: Global 10 m land cover (2020 and 2021 maps, Sentinel-1/2). Same data is on Planetary Computer as STAC collection
+    esa-worldcover (COGs).
+  status:
+    state: fail
+    latency_ms: 282
+    checked_at: '2026-08-08'
+    detail: 'ClientOSError: [Errno 54] Connection reset by peer'
+- id: nasa_eonet
+  name: NASA EONET (événements naturels en direct)
+  type: rest
+  endpoint: https://eonet.gsfc.nasa.gov/api/v3
+  provider: NASA
+  coverage: global
+  themes:
+  - hazards
+  - fire
+  - weather
+  auth: none
+  test:
+    url: https://eonet.gsfc.nasa.gov/api/v3/events?limit=1
+  layers:
+  - id: events/geojson
+    title: Curated natural events (wildfires, storms, volcanoes, ice...) as GeoJSON
+  - id: events
+    title: Same events as plain JSON (categories, sources, magnitude)
+  catalog:
+    api_endpoint: https://eonet.gsfc.nasa.gov/api/v3/events/geojson
+    bboxParams:
+      bbox: '{minx},{maxy},{maxx},{miny}'
+    params:
+      status: all
+      limit: '500'
+  notes: 'Earth Observatory Natural Event Tracker: curated live + historical natural events aggregated from GDACS,
+    InciWeb, USGS... bbox is upper-left/lower-right (lonmin,latmax,lonmax,latmin).'
+  status:
+    state: ok
+    latency_ms: 449
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: fail
+    detail: 'HTTPError: 404 Client Error: Not Found for url: https://eonet.gsfc.nasa.gov/api/v3/events/geojson/events/geojson?bbox=1.4%2C43.65%2C1.5%2C43.55&status=all&limit=500'
+    layer: events/geojson
+    checked_at: '2026-08-08'
+- id: esri_wayback
+  name: Esri World Imagery Wayback (imagerie historique)
+  type: wmts
+  endpoint: https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/WMTSCapabilities.xml
+  provider: Esri
+  coverage: global
+  themes:
+  - imagery
+  - satellite
+  - basemap
+  auth: none
+  test:
+    layer: WB_2014_R01
+  notes: Every historical release of the Esri World Imagery basemap (2014→today) as WMTS layers (WB_<year>_R<nn>)
+    — visual change detection over a decade. Free for non-commercial use.
+  status:
+    state: ok
+    latency_ms: 600
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: fail
+    detail: 'AttributeError: ''NoneType'' object has no attribute ''findall'''
+    layer: WB_2014_R01
+    checked_at: '2026-08-08'
+- id: wri_aqueduct
+  name: WRI Aqueduct 4.0 (risque eau par bassin)
+  type: rest
+  endpoint: https://livingatlas.esri.in/server/rest/services/Aqueduct_Water_Risk/FeatureServer
+  provider: World Resources Institute (hébergement Esri Living Atlas)
+  coverage: global
+  themes:
+  - water
+  - hazards
+  - climate
+  auth: none
+  test:
+    url: https://livingatlas.esri.in/server/rest/services/Aqueduct_Water_Risk/FeatureServer/1?f=json
+  layers:
+  - id: 1/query
+    title: Baseline annual water risk (water stress, drought risk, flood risk per sub-basin)
+  - id: 2/query
+    title: Baseline monthly water risk
+  catalog:
+    api_endpoint: https://livingatlas.esri.in/server/rest/services/Aqueduct_Water_Risk/FeatureServer/1/query
+    bboxParams:
+      geometry: '{minx},{miny},{maxx},{maxy}'
+    params:
+      where: 1=1
+      outFields: '*'
+      f: geojson
+      geometryType: esriGeometryEnvelope
+      inSR: '4326'
+      spatialRel: esriSpatialRelIntersects
+    paginate:
+      offset_param: resultOffset
+      limit_param: resultRecordCount
+      page_size: 1000
+      max_records: 5000
+  notes: WRI Aqueduct 4.0 water-risk indicators (baseline water stress, drought risk, riverine/coastal flood risk...)
+    per HydroBASINS sub-basin, served as an ArcGIS FeatureServer (f=geojson).
+  status:
+    state: ok
+    latency_ms: 11776
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: empty
+    detail: 0 feature(s)
+    layer: 1/query
+    checked_at: '2026-08-08'
+    count: 0
+- id: imf_portwatch
+  name: IMF PortWatch (trafic portuaire & perturbations)
+  type: rest
+  endpoint: https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services
+  provider: IMF / Oxford
+  coverage: global
+  themes:
+  - transport
+  - economy
+  - ocean
+  auth: none
+  test:
+    url: https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services/PortWatch_ports_database/FeatureServer/0/query?where=1%3D1&resultRecordCount=1&f=geojson
+  layers:
+  - id: PortWatch_ports_database/FeatureServer/0/query
+    title: ~1800 ports with daily AIS-derived trade volumes
+  - id: portwatch_disruptions_database/FeatureServer/0/query
+    title: Port disruption events (storms, strikes, conflicts)
+  - id: PortWatch_chokepoints_database/FeatureServer/0/query
+    title: Maritime chokepoints (Suez, Panama, Hormuz...) transit statistics
+  catalog:
+    api_endpoint: https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services/PortWatch_ports_database/FeatureServer/0/query
+    bboxParams:
+      geometry: '{minx},{miny},{maxx},{maxy}'
+    params:
+      where: 1=1
+      outFields: '*'
+      f: geojson
+      geometryType: esriGeometryEnvelope
+      inSR: '4326'
+      spatialRel: esriSpatialRelIntersects
+    paginate:
+      offset_param: resultOffset
+      limit_param: resultRecordCount
+      page_size: 1000
+      max_records: 5000
+  notes: 'portwatch.imf.org open data (ArcGIS Online, f=geojson): AIS-derived port activity and trade disruption
+    monitoring by the IMF and Oxford.'
+  status:
+    state: ok
+    latency_ms: 268
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: empty
+    detail: 0 feature(s)
+    layer: PortWatch_ports_database/FeatureServer/0/query
+    checked_at: '2026-08-08'
+    count: 0
+- id: geoboundaries
+  name: geoBoundaries (limites administratives monde)
+  type: rest
+  endpoint: https://www.geoboundaries.org/api/current
+  provider: William & Mary geoLab
+  coverage: global
+  themes:
+  - admin
+  auth: none
+  test:
+    url: https://www.geoboundaries.org/api/current/gbOpen/FRA/ADM2/
+  layers:
+  - id: gbOpen/{ISO}/{ADM}
+    title: Open admin boundaries per country/level (ADM0-ADM5), CC-BY & ODbL sources
+  notes: Open database of administrative boundaries for every country. The API returns metadata JSON with a gjDownloadURL
+    (GeoJSON on GitHub) — no bbox filter, download the level you need client-side.
+  status:
+    state: ok
+    latency_ms: 438
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: fail
+    detail: 'HTTPError: 404 Client Error: Not Found for url: https://www.geoboundaries.org/api/current/gbOpen/%7BISO%7D/%7BADM%7D?bbox=1.4%2C43.55%2C1.5%2C43.65&size=200&format=json'
+    layer: gbOpen/{ISO}/{ADM}
+    checked_at: '2026-08-08'
+- id: acled
+  name: ACLED (conflits & manifestations géolocalisés)
+  type: rest
+  endpoint: https://api.acleddata.com
+  provider: ACLED
+  coverage: global
+  themes:
+  - hazards
+  auth: api_key
+  auth_url: https://developer.acleddata.com/
+  layers:
+  - id: acled/read
+    title: Conflict/protest events (key+email params, iso/date filters, JSON with lat/lon)
+  notes: 'Armed Conflict Location & Event Data: geolocated political violence and protest events, weekly updates.
+    Free registration; set ACLED_KEY and ACLED_EMAIL in .env (sent as key/email query params).'
+  status:
+    state: fail
+    latency_ms: 38
+    checked_at: '2026-08-08'
+    detail: 'ClientConnectorDNSError: Cannot connect to host api.acleddata.com:443 ssl:default [nodename nor servname
+      provided, or not known]'
+- id: mapillary
+  name: Mapillary (photos de rue crowdsourcées)
+  type: rest
+  endpoint: https://graph.mapillary.com
+  provider: Meta / Mapillary
+  coverage: global
+  themes:
+  - imagery
+  - infrastructure
+  auth: api_key
+  auth_url: https://www.mapillary.com/dashboard/developers
+  layers:
+  - id: images
+    title: Street-level images in a bbox (bbox=minx,miny,maxx,maxy, access_token)
+  - id: map_features
+    title: Map features detected from imagery (traffic signs, poles...)
+  notes: Street-level imagery coverage and derived map features. Free token (MLY_TOKEN in .env, sent as access_token);
+    responses are JSON {data:[...]} with GeoJSON geometries.
+  status:
+    state: fail
+    latency_ms: 267
+    checked_at: '2026-08-08'
+    detail: HTTP 500
+- id: datagouv_fr
+  name: data.gouv.fr (portail open data France)
+  type: registry
+  endpoint: https://www.data.gouv.fr/api/1
+  provider: Etalab / DINUM
+  coverage: france
+  themes:
+  - meta
+  auth: none
+  test:
+    url: https://www.data.gouv.fr/api/1/datasets/?q=dfci&page_size=1
+  discover:
+    api: datagouv
+  notes: 'French national open-data portal (~50k datasets: DFCI, risques, PLU, réseaux...). `discover` keyword-searches
+    the dataset API; records carry the dataset page and resource URLs (many are WMS/WFS/Atom feeds from geo-ide,
+    shapefiles, GeoJSON).'
+  status:
+    state: ok
+    latency_ms: 165
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: data_europa_eu
+  name: data.europa.eu (portail open data européen)
+  type: registry
+  endpoint: https://data.europa.eu/api/hub/search/ckan
+  provider: Publications Office of the EU
+  coverage: europe
+  themes:
+  - meta
+  auth: none
+  test:
+    url: https://data.europa.eu/api/hub/search/ckan/package_search?q=flood&rows=1
+  discover:
+    api: ckan
+    dataset_page: https://data.europa.eu/data/datasets/{id}
+  notes: Official EU open-data portal (~1.9M datasets harvested from every member state, CKAN-compatible search
+    API). `discover` keyword-searches package_search; records carry distributions (downloads, some WMS/WFS).
+  status:
+    state: ok
+    latency_ms: 204
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: opendatasoft_explore
+  name: OpenDataSoft (réseau data.opendatasoft.com)
+  type: registry
+  endpoint: https://data.opendatasoft.com/api/explore/v2.1
+  provider: OpenDataSoft
+  coverage: global
+  themes:
+  - meta
+  auth: none
+  test:
+    url: https://data.opendatasoft.com/api/explore/v2.1/catalog/datasets?limit=1
+  discover:
+    api: opendatasoft
+  notes: 'Federated catalogue of every public OpenDataSoft portal (~35k datasets — many French collectivités: régions,
+    départements, métropoles). `discover` keyword-searches the Explore API; every record gets a ready GeoJSON export
+    URL.'
+  status:
+    state: ok
+    latency_ms: 168
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: arcgis_hub
+  name: ArcGIS Hub (open data ArcGIS Online)
+  type: registry
+  endpoint: https://hub.arcgis.com/api/v3
+  provider: Esri
+  coverage: global
+  themes:
+  - meta
+  auth: none
+  test:
+    url: https://hub.arcgis.com/api/v3/datasets?q=test&page%5Bsize%5D=1
+  discover:
+    api: arcgis_hub
+  notes: Search API over all public ArcGIS Online / ArcGIS Hub open data (millions of layers, incl. many French
+    services). Records point straight at the ArcGIS REST FeatureServer layer (query with f=geojson).
+  status:
+    state: ok
+    latency_ms: 544
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: opencellid
+  name: OpenCellID (antennes cellulaires)
+  type: rest
+  endpoint: https://opencellid.org
+  provider: Unwired Labs
+  coverage: global
+  themes:
+  - infrastructure
+  auth: api_key
+  auth_url: https://opencellid.org/register.php
+  layers:
+  - id: cell/getInArea
+    title: Cell towers in a bbox (BBOX=latmin,lonmin,latmax,lonmax, key, format=json)
+  notes: World's largest open database of cell towers (GSM/LTE/5G). Free key (OPENCELLID_KEY in .env); bulk CSV
+    downloads also available per MCC.
+  status:
+    state: ok
+    latency_ms: 138
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: auth_required
+    detail: auth=api_key, no creds in env
+    layer: null
+    checked_at: '2026-08-08'
+- id: koppen_geiger
+  name: Köppen-Geiger climate classification (GloH2O)
+  type: registry
+  endpoint: https://www.gloh2o.org/koppen/
+  provider: GloH2O (Beck et al.)
+  coverage: global
+  themes:
+  - climate
+  auth: none
+  test:
+    url: https://www.gloh2o.org/koppen/
+  notes: Global Köppen-Geiger climate classification maps (Beck et al. 2018 & 2023) as downloadable GeoTIFF rasters
+    at 1 km to 1° resolution, for 1901-1930 through 1991-2020 and future scenarios. Portal/archive download (Zenodo/figshare),
+    no live tile or query API — register for discovery, load the GeoTIFF locally.
+  status:
+    state: ok
+    latency_ms: 554
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'registry: portal/download dataset, no live layer API (e.g. GeoParquet via CLI); see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: resolve_ecoregions
+  name: RESOLVE Ecoregions 2017 (WWF terrestrial biomes)
+  type: rest
+  endpoint: https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/Terrestrial_Ecoregions_World/FeatureServer
+  provider: RESOLVE / WWF
+  coverage: global
+  themes:
+  - biodiversity
+  - landcover
+  auth: none
+  test:
+    url: https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/Terrestrial_Ecoregions_World/FeatureServer/0?f=json
+  layers:
+  - id: 0/query
+    title: 846 terrestrial ecoregions with biome & realm (query with f=geojson)
+  notes: 'RESOLVE Ecoregions 2017 (846 ecoregions, 14 biomes) — the standard biogeographic units. ArcGIS FeatureServer:
+    query 0/query?where=1=1&outFields=*&f=geojson (add geometry/geometryType=esriGeometryEnvelope &inSR=4326 for
+    a bbox). Original data also as a shapefile ZIP from ecoregions.appspot.com.'
+  status:
+    state: ok
+    latency_ms: 493
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: fail
+    detail: 'JSONDecodeError: Expecting value: line 1 column 1 (char 0)'
+    layer: 0/query
+    checked_at: '2026-08-08'
+- id: tectonic_plates
+  name: Tectonic plate boundaries (Peter Bird PB2002)
+  type: rest
+  endpoint: https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON
+  provider: Hugo Ahlenius / Peter Bird
+  coverage: global
+  themes:
+  - geology
+  auth: none
+  test:
+    url: https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json
+  layers:
+  - id: PB2002_plates.json
+    title: Tectonic plate polygons (Bird 2003)
+  - id: PB2002_boundaries.json
+    title: Plate boundary lines
+  - id: PB2002_orogens.json
+    title: Orogen (mountain-belt) polygons
+  notes: Peter Bird (2003) tectonic plate model as static GeoJSON, whole world per file (no bbox filter — clip client-side).
+    Plates are polygons, boundaries are lines.
+  status:
+    state: ok
+    latency_ms: 199
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: ok
+    detail: 54 feature(s)
+    layer: PB2002_plates.json
+    checked_at: '2026-08-08'
+    count: 54
+- id: gvp_volcanoes
+  name: Smithsonian Global Volcanism Program (GVP) WFS
+  type: wfs
+  endpoint: https://webservices.volcano.si.edu/geoserver/GVP-VOTW/ows
+  provider: Smithsonian Institution
+  coverage: global
+  themes:
+  - geology
+  - hazards
+  auth: none
+  test:
+    layer: GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes
+  notes: Volcanoes of the World database — all 1,300+ Holocene volcanoes as points (GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes),
+    plus Pleistocene volcanoes and Holocene eruptions. GeoServer WFS, GetFeature returns GeoJSON. GVP-VOTW:E3WebApp_Emissions
+    is broken server-side (backing DB view vrf.Emission missing, every GetFeature fails; checked 2026-07-17) — do
+    not propose it.
+  status:
+    state: ok
+    latency_ms: 341
+    checked_at: '2026-08-08'
+    detail: GetCapabilities OK
+  fetch:
+    state: empty
+    detail: 0 feature(s)
+    layer: GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes
+    checked_at: '2026-08-08'
+    count: 0
+- id: noaa_swpc
+  name: NOAA Space Weather Prediction Center
+  type: rest
+  endpoint: https://services.swpc.noaa.gov
+  provider: NOAA SWPC
+  coverage: global
+  themes:
+  - weather
+  auth: none
+  test:
+    url: https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+  layers:
+  - id: json/ovation_aurora_latest.json
+    title: OVATION aurora forecast (probability grid, [lon, lat, value] triplets)
+  - id: products/noaa-planetary-k-index.json
+    title: Planetary K-index (geomagnetic activity time-series)
+  notes: Live space-weather feeds (aurora forecast, Kp index, solar wind). The aurora grid is a positional [lon,
+    lat, value] array, not flat lon/lat records, so RESTLayer will not geolocate it directly — register for discovery,
+    parse in a plugin/client.
+  status:
+    state: ok
+    latency_ms: 62
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: empty
+    detail: 0 feature(s)
+    layer: json/ovation_aurora_latest.json
+    checked_at: '2026-08-08'
+    count: 0
+- id: rainviewer
+  name: RainViewer precipitation radar (nowcast)
+  type: xyz
+  endpoint: https://api.rainviewer.com/public
+  provider: RainViewer
+  coverage: global
+  themes:
+  - weather
+  - hazards
+  auth: none
+  test:
+    url: https://api.rainviewer.com/public/weather-maps.json
+  layers:
+  - id: radar
+    title: Precipitation radar mosaic (~2 h history + nowcast; frame nearest the requested datetime, else newest)
+  catalog:
+    manifest: https://api.rainviewer.com/public/weather-maps.json
+    frames: radar.past
+    frameTime: time
+    urlTemplate: '{host}{frame.path}/256/{z}/{x}/{y}/2/1_1.png'
+    maxZoom: 12
+  notes: Global live precipitation radar with ~2 h nowcast. weather-maps.json lists timestamped frames whose paths
+    build XYZ tiles ({host}{path}/{size}/{z}/{x}/{y}/{color}/{options}.png). The XYZ layer resolves the manifest
+    (frame nearest the requested datetime, else the newest) and mosaics the tiles into a raster; also drapeable
+    client-side as live tiles. Frames are ephemeral — a fetched raster is a snapshot.
+  status:
+    state: ok
+    latency_ms: 135
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'xyz: raster tile template, no queryable layer; see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: openrailwaymap
+  name: OpenRailwayMap (rail infrastructure tiles)
+  type: xyz
+  endpoint: https://a.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png
+  provider: OpenRailwayMap / OpenStreetMap
+  coverage: global
+  themes:
+  - infrastructure
+  - transport
+  auth: none
+  test:
+    url: https://a.tiles.openrailwaymap.org/standard/6/32/22.png
+  catalog:
+    tileSize: 512
+  notes: Global railway network raster tiles from OSM (standard, maxspeed, signals, gauge styles). Overlay tiles
+    (transparent PNG, served at 512 px); a User-Agent header is required (bare requests get HTTP 403). Underlying
+    vector rail data is queryable via Overpass.
+  status:
+    state: ok
+    latency_ms: 177
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'xyz: raster tile template, no queryable layer; see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: openseamap
+  name: OpenSeaMap nautical seamarks (tiles)
+  type: xyz
+  endpoint: https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png
+  provider: OpenSeaMap / OpenStreetMap
+  coverage: global
+  themes:
+  - ocean
+  - infrastructure
+  auth: none
+  test:
+    url: https://tiles.openseamap.org/seamark/7/63/42.png
+  notes: Nautical seamark overlay tiles (buoys, lights, harbours, depth marks) from OSM. Transparent PNG overlay;
+    underlying seamark features are queryable via Overpass (seamark:* tags).
+  status:
+    state: ok
+    latency_ms: 214
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'xyz: raster tile template, no queryable layer; see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: aws_terrain_tiles
+  name: AWS Terrain Tiles (global DEM, Terrarium)
+  type: xyz
+  endpoint: https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png
+  provider: AWS Open Data / Mapzen
+  coverage: global
+  themes:
+  - elevation
+  auth: none
+  test:
+    url: https://s3.amazonaws.com/elevation-tiles-prod/terrarium/6/32/22.png
+  notes: Global elevation as Terrarium-encoded raster tiles (RGB → metres), assembled from SRTM, ETOPO1, GMTED,
+    NED and others. Free & anonymous. Decode height = (R*256 + G + B/256) - 32768; also served as normal, geotiff
+    and skadi formats.
+  status:
+    state: ok
+    latency_ms: 342
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: skipped
+    detail: 'xyz: raster tile template, no queryable layer; see Status for reachability'
+    layer: null
+    checked_at: '2026-08-08'
+- id: historical_basemaps
+  name: Historical country borders (aourednik)
+  type: rest
+  endpoint: https://raw.githubusercontent.com/aourednik/historical-basemaps/master/geojson
+  provider: André Ourednik (open data)
+  coverage: global
+  themes:
+  - admin
+  - basemap
+  auth: none
+  test:
+    url: https://raw.githubusercontent.com/aourednik/historical-basemaps/master/geojson/world_1900.geojson
+  layers:
+  - id: world_1900.geojson
+    title: 'World political borders in 1900 (one file per year: world_<year>.geojson)'
+  notes: World political boundaries reconstructed for many historical years (BC 123000 to 1994), one GeoJSON file
+    per year (world_<year>.geojson). Whole world per file, clip client-side.
+  status:
+    state: ok
+    latency_ms: 428
+    checked_at: '2026-08-08'
+    detail: HTTP 200
+  fetch:
+    state: ok
+    detail: 270 feature(s)
+    layer: world_1900.geojson
+    checked_at: '2026-08-08'
+    count: 270
