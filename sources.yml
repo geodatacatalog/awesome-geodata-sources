@@ -254,6 +254,7 @@
   - landcover
   - agriculture
   auth: api_key
+  auth_url: https://geodes-portal.cnes.fr/MyInformation
   test:
     collection: THEIA_OSO_VECTOR_L3B
   notes: THEIA products (OSO land cover, LAI, reflectances), Pléiades, SPOT. STAC 1.0.0-beta.2 — pystac_client get_collections()
@@ -280,6 +281,7 @@
   - agriculture
   - forest
   auth: api_key
+  auth_url: https://shapps.dataspace.copernicus.eu/dashboard/#/account/settings
   test:
     url: https://shapps.dataspace.copernicus.eu/dashboard/
   layers:
@@ -1979,6 +1981,7 @@
   - climate
   - weather
   auth: api_key
+  auth_url: https://cds.climate.copernicus.eu/how-to-api
   notes: ERA5, seasonal forecasts... (cdsapi client)
   status:
     state: ok
