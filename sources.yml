@@ -95,11 +95,10 @@
     title: MODIS anomalies thermiques / feux (1 km)
   discover:
     dataset_list: https://raw.githubusercontent.com/samapriya/Earth-Engine-Datasets-List/master/gee_catalog.json
-  notes: 'Catalogue public Earth Engine (~900 datasets) publié en STAC statique. `discover` cherche par mot-clé
-    dans la liste des datasets; le résultat est un id Earth Engine (ex. COPERNICUS/S2_SR_HARMONIZED) à utiliser
-    avec la bibliothèque earthengine-api (ee.ImageCollection(id)) — pas de fetch direct via geodatacatalog. Accès
-    données: compte Google + projet Cloud (gratuit usage non commercial), EARTHENGINE_PROJECT + GOOGLE_APPLICATION_CREDENTIALS
-    dans .env.'
+  notes: 'Catalogue public Earth Engine (~900 datasets) publié en STAC statique, cherchable par mot-clé; chaque
+    résultat est un id Earth Engine (ex. COPERNICUS/S2_SR_HARMONIZED) à utiliser avec la bibliothèque earthengine-api
+    (ee.ImageCollection(id)) — le catalogue STAC lui-même ne sert que la recherche, pas les données. Accès: compte
+    Google + projet Cloud (gratuit usage non commercial).'
   status:
     state: ok
     latency_ms: 261
@@ -139,10 +138,9 @@
     dataset_list: https://raw.githubusercontent.com/samapriya/awesome-gee-community-datasets/master/community_datasets.json
   notes: Catalogue communautaire Earth Engine (~4400 datasets hébergés dans EE sous projects/sat-io/..., ex. canopée
     Meta/WRI 1 m — gee-community-catalog.org/projects/meta_trees), complémentaire du catalogue public Google (source
-    `gee`) qui ne les référence pas. `discover` cherche par mot-clé dans la liste JSON du dépôt awesome-gee-community-datasets;
-    le résultat est un id Earth Engine (ex. projects/sat-io/open-datasets/facebook/meta-canopy-height) à utiliser
-    avec la bibliothèque earthengine-api — pas de fetch direct via geodatacatalog. Mêmes credentials que la source
-    gee.
+    `gee`) qui ne les référence pas. Cherchable par mot-clé dans le dépôt awesome-gee-community-datasets; chaque
+    résultat est un id Earth Engine (ex. projects/sat-io/open-datasets/facebook/meta-canopy-height) à utiliser avec
+    la bibliothèque earthengine-api. Mêmes identifiants que gee.
   status:
     state: ok
     latency_ms: 403
@@ -314,10 +312,10 @@
       client_id: ${SH_CDSE_CLIENT_ID}
       client_secret: ${SH_CDSE_CLIENT_SECRET}
   notes: THE source for named spectral INDICES — any spyndex Sentinel-2 index (NDVI, NDMI, NBR, NDWI, EVI, SAVI...)
-    — and single BANDS (B01-B12), computed on the fly from Sentinel-2 L2A (SCL cloud-masked) via the geodata_sentinelhubapi.py
-    plugin. productType = the index/band name; prefix it with d (dNBR, dBAI, dNDVI...) for the CHANGE between the
-    two ends of the datetime range (index[date2] - index[date1], e.g. burn severity). STAC collections only expose
-    RAW bands, not named indices — use THIS for an index. Needs CDSE_CLIENT_ID/CDSE_CLIENT_SECRET.
+    — and single BANDS (B01-B12), computed on the fly from Sentinel-2 L2A (SCL cloud-masked) via the Sentinel Hub
+    Processing API. productType = the index/band name; prefix it with d (dNBR, dBAI, dNDVI...) for the CHANGE between
+    the two ends of the datetime range (index[date2] - index[date1], e.g. burn severity). STAC collections only
+    expose RAW bands, not named indices — use THIS for an index. Needs a CDSE OAuth client ID/secret.
   status:
     state: ok
     latency_ms: 247
@@ -1959,8 +1957,7 @@
     reverse-engineered from association-psfdf.fr''s own map — not a published/versioned API, so it may change or
     break without notice; CORS is wide open (access-control-allow-origin: *), confirming it is meant for public
     browser consumption. Returns a bare JSON array (no bbox filter, always the full feed) with flat Latitude/Longitude
-    fields, so RESTLayer parses it directly (lonField=Longitude/latField=Latitude); extra query params are ignored
-    server-side.'
+    fields per record; extra query params are ignored server-side.'
   status:
     state: ok
     latency_ms: 851
@@ -2007,7 +2004,7 @@
     title: Open forecast data index (GRIB)
   notes: ECMWF's free, no-key global NWP output (HRES/ENS forecasts) as raw GRIB2 files organised by run date/time
     under this index — a plain HTTP file listing, not a queryable REST API; download and parse the GRIB files client-side
-    (e.g. with cfgrib/xarray), not through RESTLayer's bbox/JSON model.
+    (e.g. with cfgrib/xarray).
   status:
     state: ok
     latency_ms: 766
@@ -2238,8 +2235,8 @@
   - meta
   auth: none
   notes: Global geological-survey federation portal — aggregates each participating country's own geology WMS (~120
-    national surveys) behind one viewer/CSW, rather than hosting the map data itself. Use `discover` against its
-    CSW to find the WMS a given country actually exposes.
+    national surveys) behind one viewer/CSW, rather than hosting the map data itself. Searchable via its CSW to
+    find the WMS a given country actually exposes.
   status:
     state: ok
     latency_ms: 251
@@ -2549,9 +2546,8 @@
   - id: reverse
     title: Reverse geocoding (lon/lat → nearest address/commune)
   notes: French national address/geocoding API (BAN data), successor of api-adresse.data.gouv.fr — e.g. to label
-    a clicked point with its commune. No key needed, France only (use nominatim for global coverage). Point-query
-    only (one lon/lat per request, no bbox), so registered for discovery/enrichment rather than a bbox-fetchable
-    catalog.yml layer.
+    a clicked point with its commune. No key needed, France only (use Nominatim for global coverage). Point-query
+    only (one lon/lat per request, no bbox) — better suited to enrichment/lookup than to bulk area downloads.
   status:
     state: ok
     latency_ms: 129
@@ -2597,8 +2593,7 @@
     url: https://a.basemaps.cartocdn.com/dark_all/6/32/22.png
   notes: 'Free global raster basemaps (© CARTO © OpenStreetMap). The endpoint is the dark night basemap — a fond
     de carte sombre pour la nuit. Swap the style path for its siblings: light_all (positron clair), dark_all (dark
-    nuit sombre), voyager, dark_nolabels, light_nolabels. XYZ raster tiles, so add them with add_xyz_tile_layer
-    (they are NOT MapLibre style JSONs — do not pass them to change_basemap).'
+    nuit sombre), voyager, dark_nolabels, light_nolabels. Plain XYZ raster tiles — not a MapLibre style JSON.'
   status:
     state: ok
     latency_ms: 83
@@ -2649,8 +2644,8 @@
     url: https://tiles.openfreemap.org/planet
   notes: Free, no-key, unlimited global vector tiles (OpenMapTiles schema, OSM data) — suitable for place-name labels
     drawn over a raster satellite/orthophoto base (a `toponyms` vector source in a MapLibre style, glyphs at tiles.openfreemap.org/fonts).
-    MVT/PBF vector tiles, not something geodatacatalog's REST/XYZ layers can fetch (no raster mosaicking, no per-record
-    lon/lat) — registered for discovery/MapLibre styling only, add it as a native vector source/style, not via add_xyz_tile_layer.
+    MVT/PBF vector tiles — not rasterisable/mosaicable and has no per-record lon/lat, so it's a MapLibre style/vector-source
+    layer rather than a bbox-fetchable raster or point dataset.
   status:
     state: ok
     latency_ms: 80
@@ -2713,8 +2708,8 @@
   catalog:
     plugin: overture_tiles.py
   notes: 'Global harmonised features (OSM + Meta + Microsoft + Esri + Foursquare), published as PMTiles (range-read
-    of the few covering tiles → fast on a live bbox, at the cost of tile generalisation/clipping and a reduced
-    attribute set) or as GeoParquet over S3 (exact geometry, all columns, but slower on a live bbox — transportation/buildings
+    of the few covering tiles → fast on a live bbox, at the cost of tile generalisation/clipping and a reduced attribute
+    set) or as GeoParquet over S3 (exact geometry, all columns, but slower on a live bbox — transportation/buildings
     span hundreds of files). Official docs: docs.overturemaps.org.'
   status:
     state: ok
@@ -2943,9 +2938,9 @@
     title: GPS fixes for a study (numeric study id → points per individual)
   catalog:
     plugin: movebank.py
-  notes: Animal tracking via the movebank.py plugin. productType = a numeric study id → GPS fixes (points per individual);
-    a non-numeric value → the public study list (one point per study). Most studies need a free Movebank login (auth.credentials)
-    + licence acceptance; the public API is rate-limited.
+  notes: Animal tracking (GPS telemetry). productType = a numeric study id → GPS fixes (points per individual);
+    a non-numeric value → the public study list (one point per study). Most studies need a free Movebank login +
+    licence acceptance; the public API is rate-limited.
   status:
     state: fail
     latency_ms: 20154
@@ -2972,9 +2967,8 @@
     title: Flights in a time window (begin/end epoch seconds)
   catalog:
     plugin: opensky.py
-  notes: '[air · real-time] Live aircraft positions. Responses are positional ARRAYS (state vectors), so the shipped
-    opensky.py plugin maps them to points (states/all). Anonymous access is rate-limited; a free OpenSky account
-    (auth.credentials username/password) raises the limits.'
+  notes: '[air · real-time] Live aircraft positions. Responses are positional ARRAYS (state vectors) rather than
+    flat lon/lat records (states/all). Anonymous access is rate-limited; a free OpenSky account raises the limits.'
   status:
     state: ok
     latency_ms: 119
@@ -3012,11 +3006,10 @@
   - id: pia
     title: All currently tracked PIA (privacy ICAO address) aircraft
   notes: '[air · real-time] Free, no-auth, community-fed alternative to OpenSky (often denser European coverage).
-    Each record is a flat JSON object with lat/lon fields inside a top-level "ac" list, which RESTLayer''s data_key=ac/lonField=lon/latField=lat
-    could parse directly — but every endpoint takes lat/lon/radius as PATH segments (point/{lat}/{lon}/{radius}),
-    not query-string bbox params, so today''s bboxParams mechanism can''t build the URL: needs a small plugin (or
-    a path-templating addition to rest.py) to turn request.bbox into a centre + radius. Pair with adsbdb to resolve
-    a returned hex/callsign into aircraft type/owner and route origin-destination.'
+    Each record is a flat JSON object with lat/lon fields inside a top-level "ac" list — but every endpoint takes
+    lat/lon/radius as PATH segments (point/{lat}/{lon}/{radius}), not query-string bbox params, so a bbox request
+    needs converting to a centre + radius first. Pair with adsbdb to resolve a returned hex/callsign into aircraft
+    type/owner and route origin-destination.'
   status:
     state: ok
     latency_ms: 294
@@ -3047,7 +3040,7 @@
   notes: '[air · reference/lookup, not positional] Lookup-only reference API (one hex/registration/callsign per
     request, no bbox) — the natural companion to live-position sources (adsblol, opensky) to enrich a state vector''s
     hex/callsign with aircraft type/owner and the route''s origin/destination airports (which do carry lat/lon).
-    No bbox-fetchable layer of its own, registered here for discovery/enrichment rather than as a catalog.yml layer.'
+    Not bbox-fetchable on its own — useful for discovery/enrichment rather than bulk area downloads.'
   status:
     state: ok
     latency_ms: 106
@@ -3116,8 +3109,7 @@
   notes: '[air · static reference, not real-time] Static, unheadered CSV snapshots (community-maintained, last major
     update ~2017 but still widely reused) — no live API, no bbox filter, whole file per download. airports.dat carries
     lat/lon per row so it geolocates directly; routes.dat only has airport codes (needs a join against airports.dat
-    for geometry). Positional (unheadered) CSV columns, so a plugin is needed to parse and geolocate rather than
-    RESTLayer''s lonField/latField.'
+    for geometry). Positional (unheadered) CSV columns — needs custom parsing to geolocate.'
   status:
     state: ok
     latency_ms: 322
@@ -3180,10 +3172,8 @@
   notes: '[maritime · real-time] Global, free-tier AIS aggregator (25,000+ vessels) covering far more ground than
     the region-locked AIS sources already in this registry (digitraffic_marine=Finland, marine_cadastre=USA). WebSocket
     only (wss://stream.aisstream.io/v0/stream): the client sends a JSON subscription message (APIKey + BoundingBoxes
-    + FilterMessageTypes) then receives a continuous push of PositionReport/ShipStaticData frames — not a request/response
-    GET, so RESTLayer''s poll-once model does not fit; needs a plugin built on a websocket client that opens the
-    socket, filters by request.bbox, listens for a few seconds and returns the accumulated positions. Free API key
-    required (register at aisstream.io/authenticate).'
+    + FilterMessageTypes) then receives a continuous push of PositionReport/ShipStaticData frames — not a simple
+    request/response GET. Free API key required (register at aisstream.io/authenticate).'
   status:
     state: ok
     latency_ms: 109
@@ -3260,7 +3250,7 @@
     (see marinetraffic) to form Kpler's combined maritime-intelligence stack. The endpoint above is the public documentation
     portal (servicedocs-sm.kpler.com) — the actual API host/base URL and credentials are only handed out with a
     commercial contract (contact developers.kpler.com / cs@kpler.com), so there is no self-serve key or free tier
-    to verify a live call against; registered for discovery, not for a bbox-fetchable catalog.yml layer.
+    to verify a live call against; registered here for discovery rather than as a directly usable dataset.
   status:
     state: ok
     latency_ms: 885
@@ -3438,9 +3428,8 @@
     title: Total population for the bbox (Global Project pop, year from datetime)
   catalog:
     plugin: worldpop.py
-  notes: 'Gridded population via the worldpop.py plugin: submits the bbox to the async stats API and returns one
-    feature (bbox polygon + total_population). productType = dataset (default wpgppop). Rasters also download from
-    hub.worldpop.org.'
+  notes: 'Gridded population via WorldPop''s async stats API: submits a bbox and returns one feature (bbox polygon
+    + total_population). productType = dataset (default wpgppop). Rasters also download from hub.worldpop.org.'
   status:
     state: ok
     latency_ms: 1331
@@ -4021,8 +4010,8 @@
     url: https://www.data.gouv.fr/api/1/datasets/?q=dfci&page_size=1
   discover:
     api: datagouv
-  notes: 'French national open-data portal (~50k datasets: DFCI, risques, PLU, réseaux...). `discover` keyword-searches
-    the dataset API; records carry the dataset page and resource URLs (many are WMS/WFS/Atom feeds from geo-ide,
+  notes: 'French national open-data portal (~50k datasets: DFCI, risques, PLU, réseaux...), keyword-searchable via
+    its dataset API; records carry the dataset page and resource URLs (many are WMS/WFS/Atom feeds from geo-ide,
     shapefiles, GeoJSON).'
   status:
     state: ok
@@ -4049,7 +4038,7 @@
     api: ckan
     dataset_page: https://data.europa.eu/data/datasets/{id}
   notes: Official EU open-data portal (~1.9M datasets harvested from every member state, CKAN-compatible search
-    API). `discover` keyword-searches package_search; records carry distributions (downloads, some WMS/WFS).
+    API), keyword-searchable via package_search; records carry distributions (downloads, some WMS/WFS).
   status:
     state: ok
     latency_ms: 204
@@ -4074,7 +4063,7 @@
   discover:
     api: opendatasoft
   notes: 'Federated catalogue of every public OpenDataSoft portal (~35k datasets — many French collectivités: régions,
-    départements, métropoles). `discover` keyword-searches the Explore API; every record gets a ready GeoJSON export
+    départements, métropoles), keyword-searchable via the Explore API; every record gets a ready GeoJSON export
     URL.'
   status:
     state: ok
@@ -4263,8 +4252,7 @@
   - id: products/noaa-planetary-k-index.json
     title: Planetary K-index (geomagnetic activity time-series)
   notes: Live space-weather feeds (aurora forecast, Kp index, solar wind). The aurora grid is a positional [lon,
-    lat, value] array, not flat lon/lat records, so RESTLayer will not geolocate it directly — register for discovery,
-    parse in a plugin/client.
+    lat, value] array rather than flat lon/lat records, so it needs custom parsing to geolocate.
   status:
     state: ok
     latency_ms: 62
@@ -4296,12 +4284,11 @@
     title: Starlink constellation
   - id: gp.php?CATNR={norad_id}&FORMAT=json
     title: Single object by NORAD catalog number
-  notes: 'Free, no-key orbital element sets (OMM/JSON, GP = "general perturbations", the modern TLE replacement).
+  notes: Free, no-key orbital element sets (OMM/JSON, GP = "general perturbations", the modern TLE replacement).
     Records are Keplerian elements (inclination, eccentricity, mean motion...), NOT lon/lat — a ground position
-    at a given instant needs SGP4 propagation (Python `sgp4` package) from the elements plus the requested datetime,
-    so RESTLayer cannot geolocate it directly: registered for discovery, needs a plugin that propagates then geolocates.
-    CelesTrak''s usage policy asks clients to cache results and not re-query more than a few times a day per GROUP/file
-    — element sets update at most once daily, so poll accordingly rather than per-request.'
+    at a given instant needs SGP4 propagation (Python `sgp4` package) from the elements plus the requested datetime.
+    CelesTrak's usage policy asks clients to cache results and not re-query more than a few times a day per GROUP/file
+    — element sets update at most once daily, so poll accordingly rather than per-request.
   status:
     state: ok
     latency_ms: 651
