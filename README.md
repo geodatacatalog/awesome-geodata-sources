@@ -1,18 +1,13 @@
 # Open geospatial data sources
 
-Ready-to-use curated list of open geodata sources — WFS, WMS, WMTS, WCS, STAC, REST APIs, OpenStreetMap and more, most of them free and account-free, with a France & Europe focus. Maintained alongside the `geodatacatalog` Python library, which turns any of these into a ready-to-fetch YAML catalog.
+Ready-to-use curated list of open geodata sources — WFS, WMS, WMTS, WCS, STAC, REST APIs, OpenStreetMap and more, most of them free and account-free, with a France & Europe focus.
 
-> **Generated file — do not edit.** The source of truth is
-> [`sources.yml`](sources.yml);
-> regenerate with `geodatacatalog check` (probes every service) or `geodatacatalog md`.
->
-> 157 sources · last check: 2026-08-08 · search them with
-> `geodatacatalog search "forêt"` (FR/EN) and turn them into a config with
-> `geodatacatalog add <source> <layer> -o catalog.yml`.
+> **Generated file — do not edit.** The source of truth is [`sources.yml`](sources.yml).
+> 157 sources · last check: 2026-08-08.
 
 Status legend: ✅ working · ❌ failing · 🔐 credentials required · ❔ not checked yet
 Auth column: 🔒 credentials required (linked to the registration page when known) · 💰 next to a name = paid service, no free tier
-Fetch legend (`geodatacatalog check --fetch`): ✅ returned data · ∅ empty on test AOI · ❌ fetch error · 🔐 needs creds · ⏭ not fetchable
+Fetch legend: ✅ returned data · ∅ empty on test AOI · ❌ fetch error · 🔐 needs creds · ⏭ not fetchable
 
 ## 🛰️ Satellite imagery & Earth observation
 
