@@ -2712,12 +2712,10 @@
     title: Administrative divisions (areas)
   catalog:
     plugin: overture_tiles.py
-  notes: 'Global harmonised features (OSM + Meta + Microsoft + Esri + Foursquare). DEFAULT plugin `overture_tiles.py`
-    reads the official Overture PMTiles (range-read of the few covering tiles) → FAST on a live bbox, at the cost
-    of tile generalisation/clipping and a reduced attribute set (needs pmtiles + mapbox-vector-tile + mercantile).
-    For EXACT geometry / all columns / bulk extraction over large areas, switch the provider to `plugin: overture.py`
-    (GeoParquet over S3 via DuckDB — slower on a live bbox, transportation/buildings span hundreds of files). `pip
-    install geodatacatalog[overture]`.'
+  notes: 'Global harmonised features (OSM + Meta + Microsoft + Esri + Foursquare), published as PMTiles (range-read
+    of the few covering tiles → fast on a live bbox, at the cost of tile generalisation/clipping and a reduced
+    attribute set) or as GeoParquet over S3 (exact geometry, all columns, but slower on a live bbox — transportation/buildings
+    span hundreds of files). Official docs: docs.overturemaps.org.'
   status:
     state: ok
     latency_ms: 237
